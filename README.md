@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Welcome to Loflo
 
-## Getting Started
+## How to install
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+``` cli
+pnpm i
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How to run development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+``` cli
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## How to start Turso db
 
-## Learn More
+- Requirements to run: [Turso CLI](https://docs.turso.tech/reference/turso-cli)
+  
+### My steps to install Turso CLI on Windows
 
-To learn more about Next.js, take a look at the following resources:
+- Download WSL
+- Download [Homebrew](https://brew.sh/) (if not installed)
+  - Follow cli steps to ensure it's added to your PATH
+  - Run `sudo apt-get update`
+  - Ensure [Build tools](https://docs.brew.sh/Homebrew-on-Linux#requirements) are installed: `sudo apt-get install build-essential procps curl file git`
+  - Ensure gcc is installed `brew install gcc`
+- Install [Turso CLI](https://docs.turso.tech/reference/turso-cli) using the following command (at the time of writing this): `brew install tursodatabase/tap/turso`
+- Go to the [Releases Page](https://github.com/libsql/sqld/releases) and copy the link to the latest linux file, example:`sqld-x86_64-unknown-linux-gnu.tar.xz`
+- Open WSL terminal (not cmd, has to be WSL), type `cd` to go to root, and run `wget LATEST_LINK__HERE`, ex: `wget https://github.com/libsql/sqld/releases/download/v0.21.9/sqld-x86_64-unknown-linux-gnu.tar.xz`
+- Unzip the tar file using `tar -xf FILE_NAME`, ex: `tar -xf sqld-x86_64-unknown-linux-gnu.tar.xz`
+- Type `ls` to view the name of the extracted folder
+- `cd` into the folder, ex: `sqld-x86_64-unknown-linux-gnu/`
+- Move `sqld` into a system-wide directory using `sudo mv sqld /usr/local/bin/`
+- Open `~/.bashrc` using `vim ~/.bashrc` or an editor of your choice (eg: `nano`)
+  - Use your arrow key to go all the way down to a new line, press the `Insert` key on your keyboard, and paste `export PATH="/usr/local/bin/sqld:$PATH"`
+  - Then, press `Escape` on your keyboard, type `:w` and press `ENTER`
+  - Then type `:x`, and press `ENTER`
+  - Type `source ~/.bashrc` in the terminal (to refresh paths)
+- Verify sqld works by typing `sqld --version`
+- Then run locally, using the Turso command below
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Also, if you accidentally typed `exit` on the WSL terminal, and it lost color, packages, and functionality, type `source ~/.bashrc`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Run Locally
 
-## Deploy on Vercel
+``` cli
+turso dev --db-file dev.db
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Push db
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+``` cli
+pnpm db:push
+```
+
+### Studio
+
+``` cli
+npx drizzle-kit studio
+```

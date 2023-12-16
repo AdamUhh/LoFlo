@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import { JetBrains_Mono, Poppins } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
+import { Toaster } from "shadcn/components/ui/toaster";
+import "../globals.css";
 
 const jetBrains = JetBrains_Mono({
   subsets: ["latin"],
@@ -14,7 +15,10 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "LoFlo",
+  title: {
+    template: "%s | LoFlo",
+    default: "LoFlo App",
+  },
   description:
     "Welcome to LoFlo, a simple flashcard app. Create, study, and reinforce knowledge effortlessly.",
   generator: "Next.js",
@@ -57,7 +61,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${jetBrains.variable} ${poppins.variable} overflow-hidden font-poppins`}
       >
         <NextTopLoader showSpinner={false} />
-        {children}
+        <div className="grid grid-rows-[50px_auto]">{children}</div>
+        <Toaster />
       </body>
     </html>
   );

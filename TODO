@@ -1,0 +1,48 @@
+
+What will it do:
+  ☐ Allow users to create folders and flashcards
+  ☐ Each folder can have tags, as well as a mode (auto speak every flashcard or not)
+  ☐ Allow users to create flashcards (belonging to folders) containing code snippets.
+    ☐ Support syntax highlighting for various programming languages (react-markdown)
+    
+
+
+Basic Outline:
+  Dashboard:
+    ☐ Overview of the user's activity and progress.
+    ☐ Quick access to recently studied flashcards or folders.
+    ☐ Option to create a new folder or flashcards, after creation, will redirect to that folder
+    ☐ Navigation to other sections of the app.
+    
+  My Folders:
+    ✔ Display a list of all folders created by the user. @done(23-12-15 11:47)
+    ☐ Each folder may show the number of:
+      ☐ flashcards,
+      ✔ subfolders @done(23-12-15 11:47)
+    ☐ Options to 
+      ☐ edit,
+      ☐ delete,
+      ☐ sort/organize folders
+    
+  Folder:
+    ☐ Detailed view of a specific folder and its contents.
+    ☐ List of flashcards within the selected folder.
+    ☐ Options to add, edit, or delete flashcards.
+    ☐ Ability to navigate to the Flashcard Start page for that folder.
+    ☐ Ability to choose folders to go into study mode
+    
+    Study Mode:
+    ☐ Provide a focused environment for studying flashcards.
+    ☐ Display flashcards one at a time with controls to move between them.
+    ☐ Show progress indicators such as the current card number and total cards.
+    ☐ Include options to reveal the answer, mark a card as known, or flag it for review.
+    ☐ Options to edit the current flashcard, or delete the flashcard.
+    ☐ Display statistics on the user's performance after completing a study session.
+
+Todo for pages:
+  My Folders:
+    ☐ Perhaps create a dropdown on hover (absolute, bottom) that shows an expand, edit, delete option
+      ☐ Mobile users are not able to see this?
+      ☐ Will need to refactor code to generalize Dialog and reduce redunduncy
+    ☐ Find a way to show info of a folder,
+      ☐ Either via info button which opens a modal, or on hover (and a set space on the page )
