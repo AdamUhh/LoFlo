@@ -2,10 +2,10 @@ import { Adapter } from "@auth/core/adapters";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import NextAuth, { type NextAuthConfig } from "next-auth";
 
-import GitHub from "next-auth/providers/GitHub";
+import { and, eq } from "drizzle-orm";
+import GitHub from "next-auth/providers/github";
 import { db } from "src/db";
 import { accounts, users } from "./db/schema/auth";
-import { eq, and } from "drizzle-orm";
 
 // ? Source: https://github.com/nextauthjs/next-auth/issues/8377#issuecomment-1694720111
 // ? Fixes issue where you are unable to login after a logout in the same account/provider

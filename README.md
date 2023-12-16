@@ -53,8 +53,8 @@ turso dev --db-file dev.db
 pnpm db:push
 ```
 
-### Studio
+### Drizzle Studio
 
 ``` cli
-npx drizzle-kit studio
+pnpm studio
 ```

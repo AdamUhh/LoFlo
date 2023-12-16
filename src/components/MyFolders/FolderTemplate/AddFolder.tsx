@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { Button } from "shadcn/components/ui/button";
@@ -13,12 +14,10 @@ import {
 } from "shadcn/components/ui/dialog";
 import { Input } from "shadcn/components/ui/input";
 import { Label } from "shadcn/components/ui/label";
-import { ToastAction } from "shadcn/components/ui/toast";
 import { useToast } from "shadcn/components/ui/use-toast";
 import SubmitButton from "./SubmitButton";
 import createFolder from "./action";
 import { T_CreateFolderReturn } from "./types";
-import { redirect } from "next/navigation";
 
 export default function AddFolderTemplate() {
   const [open, setOpen] = useState(false);
@@ -57,9 +56,9 @@ function DialogContents({ setOpen }: { setOpen: (_bool: boolean) => void }) {
       let action = undefined;
       if (formState.redirectPayload && !!formState.redirectPayload.length)
         action = (
-          <ToastAction altText="Go To Folder" asChild>
-            <Button onClick={() => redirect(formState.redirectPayload!)}>Go to Folder</Button>
-          </ToastAction>
+          <Button asChild>
+            <Link href={formState.redirectPayload!}>Go To Folder</Link>
+          </Button>
         );
 
       toast({
