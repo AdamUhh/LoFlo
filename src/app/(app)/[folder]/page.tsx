@@ -1,8 +1,11 @@
 import { Metadata } from "next";
 import Container from "src/components/Container";
 
+import Flashcards from "components/Folder/Flashcards";
 import OptionsBar from "components/Folder/OptionsBar";
+import SubFoldersBar from "components/Folder/SubFoldersBar";
 import { selectFolder } from "db/queries/folder";
+import { notFound } from "next/navigation";
 import { cache } from "react";
 
 export const getFolder = cache(async (folderId: string) => {
@@ -14,10 +17,15 @@ export async function generateMetadata(
   // parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const folder = await getFolder(folderId);
-  console.log('meta folder', folder)
+
+  const rootFolder = folder.filter((f) => f.id === folderId);
+
+  // Source: https://github.com/vercel/next.js/discussions/49925#discussioncomment-6386693
+  // ? return blank metadata, so not-found.tsx can catch it
+  if (!!!rootFolder.length) return {};
 
   return {
-    title: folder[0].name,
+    title: rootFolder[0].name,
   };
 }
 
@@ -27,11 +35,14 @@ export default async function FolderPage({
   params: { folder: string };
 }) {
   const folder = await getFolder(folderId);
-  console.log('page folder', folder)
+
+  if (!!!folder.length) return notFound();
 
   return (
     <Container title={folder[0].name}>
       <OptionsBar />
+      <SubFoldersBar />
+      <Flashcards />
       {/* <Folder folder={folder} /> */}
     </Container>
   );
