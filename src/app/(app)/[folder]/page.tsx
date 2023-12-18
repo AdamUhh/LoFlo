@@ -30,20 +30,23 @@ export async function generateMetadata(
 }
 
 export default async function FolderPage({
-  params: { folder: folderId },
+  params: { folder: _folderId },
 }: {
   params: { folder: string };
 }) {
-  const folder = await getFolder(folderId);
+  const folder = await getFolder(_folderId);
 
   if (!!!folder.length) return notFound();
 
   return (
     <Container title={folder[0].name}>
       <OptionsBar />
-      <SubFoldersBar />
+      <SubFoldersBar
+        subFolders={folder.filter(
+          (f) => f.id !== _folderId /** && !Object.hasProperty(f.folderId) */,
+        )}
+      />
       <Flashcards />
-      {/* <Folder folder={folder} /> */}
     </Container>
   );
 }

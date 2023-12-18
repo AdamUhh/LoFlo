@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { Button } from "shadcn/components/ui/button";
@@ -20,28 +21,45 @@ import createFolder from "./action";
 import { T_CreateFolderReturn } from "./types";
 
 export default function AddFolderTemplate() {
+  const params = useParams();
+  const [subfolder] = useState<boolean>(!!params.folder);
   const [open, setOpen] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="flex min-h-[150px] w-full grow cursor-pointer flex-col items-center  justify-center rounded-xl border-4 border-dashed border-gray-500/20 px-4 pb-3 pt-4 hover:bg-gray-400/20 hover:shadow">
-          <h4>+ Add Folder</h4>
-        </button>
+        {subfolder ? (
+          <Button variant={"outline"}>
+            <h4>+ Add Subfolder</h4>
+          </Button>
+        ) : (
+          <button className="flex min-h-[150px] w-full grow cursor-pointer flex-col items-center  justify-center rounded-xl border-4 border-dashed border-gray-500/20 px-4 pb-3 pt-4 hover:bg-gray-400/20 hover:shadow">
+            <h4>+ Add Folder</h4>
+          </button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-w-sm md:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Folder</DialogTitle>
+          <DialogTitle>Add {subfolder ? "Subfolder" : "Folder"}</DialogTitle>
         </DialogHeader>
         <div className="flex items-center space-x-2">
-          <DialogContents setOpen={setOpen} />
+          <DialogContents
+            setOpen={setOpen}
+            parentId={subfolder ? (params.folder as string) : undefined}
+          />
         </div>
       </DialogContent>
     </Dialog>
   );
 }
 
-function DialogContents({ setOpen }: { setOpen: (_bool: boolean) => void }) {
+function DialogContents({
+  setOpen,
+  parentId,
+}: {
+  setOpen: (_bool: boolean) => void;
+  parentId?: string;
+}) {
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
   const [formState, onFormSubmit] = useFormState(createFolder, {
@@ -49,6 +67,7 @@ function DialogContents({ setOpen }: { setOpen: (_bool: boolean) => void }) {
     returnMessage: "",
     redirectPayload: "",
   } as T_CreateFolderReturn);
+  const FolderType = !!parentId?.length ? "Subfolder" : "Folder";
 
   useEffect(() => {
     if (formState.status === "success") {
@@ -57,18 +76,13 @@ function DialogContents({ setOpen }: { setOpen: (_bool: boolean) => void }) {
       if (formState.redirectPayload && !!formState.redirectPayload.length)
         action = (
           <Button asChild>
-            <Link href={formState.redirectPayload!}>Go To Folder</Link>
+            <Link href={formState.redirectPayload!}>{`Go to ${FolderType}`}</Link>
           </Button>
         );
 
       toast({
-        title: "Created Folder",
+        title: `Created ${FolderType}`,
         description: formState.returnMessage,
-        // <div className="flex flex-col">
-        //   <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-        //     <code className="text-white"></code>
-        //   </pre>
-        // </div>
         action,
       });
 
@@ -79,13 +93,22 @@ function DialogContents({ setOpen }: { setOpen: (_bool: boolean) => void }) {
   return (
     <form action={onFormSubmit} className="w-full space-y-6">
       <div className="grid w-full items-center gap-1.5">
-        <Input name="folderName" type="text" id="folderName" placeholder="Folder Name" />
+        <Input name="folderName" type="text" id="folderName" placeholder={`${FolderType} Name`} />
         <Input
           name="folderDescription"
           type="text"
           id="folderDescription"
           placeholder="Short Description (optional)"
         />
+        {!!parentId?.length && (
+          <Input
+            type="text"
+            hidden
+            name={"folderParentId"}
+            value={parentId}
+            style={{ display: "none" }}
+          />
+        )}
       </div>
       <div className="items-top flex space-x-2">
         <Checkbox id="speakerMode" name="speakerMode" />
@@ -103,7 +126,9 @@ function DialogContents({ setOpen }: { setOpen: (_bool: boolean) => void }) {
       </div>
       {formState.status === "error" && (
         <div className="mt-2 flex items-center gap-1">
-          <p className="text-red-500">{formState.returnMessage || "Failed to create folder"}</p>
+          <p className="text-red-500">
+            {formState.returnMessage || `Failed to create ${FolderType.toLowerCase()}`}
+          </p>
         </div>
       )}
       <DialogFooter>

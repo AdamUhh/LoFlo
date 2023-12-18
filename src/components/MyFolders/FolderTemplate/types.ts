@@ -11,4 +11,14 @@ type T_CreateFolderReturn = {
   redirectPayload?: string;
 };
 
-export type { FolderShapeProps, T_CreateFolderReturn };
+type AddFolderTemplateProps =
+  | {
+      subfolder: true;
+      parentId: string;
+    }
+  | {
+      subfolder: false;
+      parentId?: string;
+    };
+
+export type { FolderShapeProps, AddFolderTemplateProps, T_CreateFolderReturn };

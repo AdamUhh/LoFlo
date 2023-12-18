@@ -42,6 +42,7 @@ export default async function createFolder(
   }
 
   const data = parse.data;
+  const FolderType = !!data.folderParentId ? "subfolder" : "folder"
 
   try {
     // ? Create Folder via drizzleorm
@@ -59,7 +60,7 @@ export default async function createFolder(
       parentId: data.folderParentId,
     });
 
-    revalidatePath("/my-folders");
+    revalidatePath(!!data.folderParentId ? `/${data.folderParentId}` : "/my-folders");
 
     return {
       status: "success",
@@ -69,7 +70,7 @@ export default async function createFolder(
   } catch (e) {
     return {
       status: "error",
-      returnMessage: "Failed to create folder",
+      returnMessage: `Failed to create ${FolderType}`,
     };
   }
 }
