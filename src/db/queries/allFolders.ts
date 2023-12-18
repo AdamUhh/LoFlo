@@ -88,7 +88,7 @@ export const selectFolders = async (
   }
 
   return db.all(sql`
-   WITH RECURSIVE FolderHierarchy AS (
+  WITH RECURSIVE FolderHierarchy AS (
     -- Anchor member: Select root folders
     SELECT id, parentId, createdAt, updatedAt, name, 0 AS depth
     FROM folder
@@ -101,21 +101,62 @@ export const selectFolders = async (
     FROM folder f
     JOIN FolderHierarchy fh ON f.parentId = fh.id
     ORDER BY ${sortCondition}
+
   )
-  
-  -- Select root folders with the count of subfolders
+
+  -- Select root folders with the count of subfolders and flashcards
   SELECT 
-    id,
-    name,
+    FolderHierarchy.id,
+    FolderHierarchy.name,
     (
       SELECT COUNT(*)
       FROM FolderHierarchy subfolders
       WHERE subfolders.parentId = FolderHierarchy.id AND subfolders.depth > 0
-    ) AS subfolderCount
+    ) AS subfolderCount,
+    (
+      SELECT COUNT(*)
+      FROM flashcard
+      WHERE flashcard.folderId IN (
+        SELECT id
+        FROM FolderHierarchy descendants
+        WHERE descendants.id = FolderHierarchy.id OR descendants.parentId = FolderHierarchy.id
+      )
+    ) AS flashcardCount
   FROM FolderHierarchy
   WHERE depth = 0
   ;
-    `);
+`);
+
+
+  // return db.all(sql`
+  //  WITH RECURSIVE FolderHierarchy AS (
+  //   -- Anchor member: Select root folders
+  //   SELECT id, parentId, createdAt, updatedAt, name, 0 AS depth
+  //   FROM folder
+  //   WHERE ${whereCondition}
+    
+  //   UNION ALL
+    
+  //   -- Recursive member: Select subfolders
+  //   SELECT f.id, f.parentId, f.createdAt, f.updatedAt, f.name, fh.depth + 1 AS depth
+  //   FROM folder f
+  //   JOIN FolderHierarchy fh ON f.parentId = fh.id
+  //   ORDER BY ${sortCondition}
+  // )
+  
+  // -- Select root folders with the count of subfolders
+  // SELECT 
+  //   id,
+  //   name,
+  //   (
+  //     SELECT COUNT(*)
+  //     FROM FolderHierarchy subfolders
+  //     WHERE subfolders.parentId = FolderHierarchy.id AND subfolders.depth > 0
+  //   ) AS subfolderCount
+  // FROM FolderHierarchy
+  // WHERE depth = 0
+  // ;
+  //   `);
 };
 
 export const insertFolder = ({
