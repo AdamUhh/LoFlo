@@ -1,37 +1,37 @@
 "use server";
 
 import { auth } from "auth";
-import { insertFolder } from "db/queries/allFolders";
+import { insertFlashcard } from "db/queries/allFlashcards";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { T_CreateFolderReturn } from "./types";
+import { T_CreateFlashcardReturn } from "./types";
 
 const schema = z.object({
-  folderName: z
+  flashcardQuestion: z
     .string()
     .trim()
     .min(1, { message: "Folder name field has to be filled." })
     .max(50, { message: "Folder name too long! Max Characters: 50" }),
-  folderDescription: z
+  flashcardAnswer: z
     .string()
     .trim()
     .max(100, { message: "Folder description too long! Max Characters: 100" })
     .optional(),
   speakerMode: z.union([z.literal("on"), z.literal(null)]),
-  folderParentId: z.string().nullable(),
+  flashcardFolderParentId: z.string().trim(),
 });
 
-export default async function createFolder(
+export default async function createFlashcard(
   _: any,
   formData: FormData,
-): Promise<T_CreateFolderReturn> {
+): Promise<T_CreateFlashcardReturn> {
   const session = await auth();
 
   const parse = schema.safeParse({
-    folderName: formData.get("folderName"),
-    folderDescription: formData.get("folderDescription"),
+    flashcardQuestion: formData.get("flashcardQuestion"),
+    flashcardAnswer: formData.get("flashcardAnswer"),
     speakerMode: formData.get("speakerMode"),
-    folderParentId: formData.get("folderParentId"),
+    flashcardFolderParentId: formData.get("flashcardFolderParentId"),
   });
 
   if (!parse.success) {
@@ -42,35 +42,36 @@ export default async function createFolder(
   }
 
   const data = parse.data;
-  const FolderType = !!data.folderParentId ? "subfolder" : "folder"
 
   try {
-    // ? Create Folder via drizzleorm
+    // ? Create Flashcard via drizzleorm
     if (!session?.user.id)
       return {
         status: "error",
         returnMessage: "No user found",
       };
 
-    const insertedFolderRes = await insertFolder({
-      name: data.folderName,
-      description: data.folderDescription,
+    const insertedFlashcardRes = await insertFlashcard({
+      question: data.flashcardQuestion,
+      answer: data.flashcardAnswer,
       userId: session.user.id,
       autoSpeakerMode: data.speakerMode !== null,
-      parentId: data.folderParentId,
+      folderId: data.flashcardFolderParentId,
     });
 
-    revalidatePath(!!data.folderParentId ? `/${data.folderParentId}` : "/my-folders");
+    revalidatePath(
+      !!data.flashcardFolderParentId ? `/${data.flashcardFolderParentId}` : "/my-folders",
+    );
 
     return {
       status: "success",
-      returnMessage: data.folderName,
-      redirectPayload: `/${insertedFolderRes[0].folderId}`,
+      returnMessage: data.flashcardQuestion,
+      redirectPayload: `/${data.flashcardFolderParentId}/${insertedFlashcardRes[0].flashcardId}`,
     };
   } catch (e) {
     return {
       status: "error",
-      returnMessage: `Failed to create ${FolderType}`,
+      returnMessage: `Failed to create flashcard\n${e}`,
     };
   }
 }

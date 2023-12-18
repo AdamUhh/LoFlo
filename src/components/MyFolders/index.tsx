@@ -1,5 +1,5 @@
 import FolderTemplate from "./FolderTemplate";
-import AddFolderTemplate from "./FolderTemplate/AddFolder";
+import AddFolderButton from "./FolderTemplate/AddFolder";
 
 type MyFoldersProps = {
   id: string;
@@ -10,7 +10,7 @@ type MyFoldersProps = {
 export default function MyFolders({ folders }: { folders: MyFoldersProps[] }) {
   return (
     <div className="mt-4 grid max-h-[calc(100%-60px)] grid-cols-1 gap-4 overflow-y-auto overflow-x-hidden sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 py-2">
-      <AddFolderTemplate />
+      <AddFolderButton />
       {!!folders.length && folders.map((folder) => <FolderTemplate key={folder.id} {...folder} />)}
     </div>
   );

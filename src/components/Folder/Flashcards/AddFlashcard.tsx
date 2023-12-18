@@ -16,37 +16,32 @@ import {
 } from "shadcn/components/ui/dialog";
 import { Input } from "shadcn/components/ui/input";
 import { Label } from "shadcn/components/ui/label";
+import { Textarea } from "shadcn/components/ui/textarea";
 import { useToast } from "shadcn/components/ui/use-toast";
 import SubmitButton from "./SubmitButton";
-import createFolder from "./action";
-import { T_CreateFolderReturn } from "./types";
+import createFlashcard from "./action";
+import { T_CreateFlashcardReturn } from "./types";
 
-export default function AddFolderButton() {
+export default function AddFlashcardButton() {
   const params = useParams();
-  const [subfolder] = useState<boolean>(!!params.folder);
+  const [hasFolder] = useState<boolean>(!!params.folder);
   const [open, setOpen] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {subfolder ? (
-          <Button variant={"outline"}>
-            <h4>+ Add Subfolder</h4>
-          </Button>
-        ) : (
-          <button className="flex min-h-[150px] w-full grow cursor-pointer flex-col items-center  justify-center rounded-xl border-4 border-dashed border-gray-500/20 px-4 pb-3 pt-4 hover:bg-gray-400/20 hover:shadow">
-            <h4>+ Add Folder</h4>
-          </button>
-        )}
+        <Button variant={"outline"}>
+          <h4>+ Add Flashcard</h4>
+        </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-sm md:max-w-md">
+      <DialogContent className="3xl:max-w-4xl max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Add {subfolder ? "Subfolder" : "Folder"}</DialogTitle>
+          <DialogTitle>Add Flashcard</DialogTitle>
         </DialogHeader>
         <div className="flex items-center space-x-2">
           <DialogContents
             setOpen={setOpen}
-            parentId={subfolder ? (params.folder as string) : undefined}
+            flashcardFolderParentId={hasFolder ? (params.folder as string) : undefined}
           />
         </div>
       </DialogContent>
@@ -56,19 +51,18 @@ export default function AddFolderButton() {
 
 function DialogContents({
   setOpen,
-  parentId,
+  flashcardFolderParentId,
 }: {
   setOpen: (_bool: boolean) => void;
-  parentId?: string;
+  flashcardFolderParentId?: string;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
-  const [formState, onFormSubmit] = useFormState(createFolder, {
+  const [formState, onFormSubmit] = useFormState(createFlashcard, {
     status: "default",
     returnMessage: "",
     redirectPayload: "",
-  } as T_CreateFolderReturn);
-  const FolderType = !!parentId?.length ? "Subfolder" : "Folder";
+  } as T_CreateFlashcardReturn);
 
   useEffect(() => {
     if (formState.status === "success") {
@@ -77,12 +71,12 @@ function DialogContents({
       if (formState.redirectPayload && !!formState.redirectPayload.length)
         action = (
           <Button asChild>
-            <Link href={formState.redirectPayload!}>{`Go to ${FolderType}`}</Link>
+            <Link href={formState.redirectPayload!}>{`Go to Flashcard`}</Link>
           </Button>
         );
 
       toast({
-        title: `Created ${FolderType}`,
+        title: "Created Flashcard",
         description: formState.returnMessage,
         action,
       });
@@ -94,19 +88,26 @@ function DialogContents({
   return (
     <form action={onFormSubmit} className="w-full space-y-6">
       <div className="grid w-full items-center gap-1.5">
-        <Input name="folderName" type="text" id="folderName" placeholder={`${FolderType} Name`} />
-        <Input
-          name="folderDescription"
-          type="text"
-          id="folderDescription"
-          placeholder="Short Description (optional)"
-        />
-        {!!parentId?.length && (
+        <div className="gap-1 md:flex">
+          <Textarea
+            placeholder="Flashcard Question"
+            name="flashcardQuestion"
+            id="flashcardQuestion"
+            className="min-h-[150px] whitespace-pre"
+          />
+          <Textarea
+            placeholder="Flashcard Answer"
+            name="flashcardAnswer"
+            id="flashcardAnswer"
+            className="min-h-[150px] whitespace-pre"
+          />
+        </div>
+        {!!flashcardFolderParentId?.length && (
           <Input
             type="text"
             hidden
-            name={"folderParentId"}
-            value={parentId}
+            name={"flashcardFolderParentId"}
+            value={flashcardFolderParentId}
             onChange={()=>{}}
             style={{ display: "none" }}
           />
@@ -120,19 +121,18 @@ function DialogContents({
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             <div className=" -mt-1 flex items-center gap-1">
-              <Volume2/>Auto Read Text
+              <Volume2 />
+              Auto Read Text
             </div>
             <p className="mt-1 text-sm font-normal text-muted-foreground">
-              All flashcards will automatically read text aloud. <br /> Useful for language flashcards.
+              Flashcard will automatically read text aloud. <br /> Useful for language flashcards.
             </p>
           </Label>
         </div>
       </div>
       {formState.status === "error" && (
         <div className="mt-2 flex items-center gap-1">
-          <p className="text-red-500">
-            {formState.returnMessage || `Failed to create ${FolderType.toLowerCase()}`}
-          </p>
+          <p className="text-red-500">{formState.returnMessage || "Failed to create flashcard"}</p>
         </div>
       )}
       <DialogFooter>
