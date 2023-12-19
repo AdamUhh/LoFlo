@@ -40,14 +40,21 @@ export default async function FolderPage({
 
   if (!!!rootFolder.length) return notFound();
 
+  console.log(folder)
+
   return (
     <Container title={folder[0].name}>
       <SubFoldersBar
+        parentId={rootFolder[0].parentId}
         subFolders={folder.filter(
           (f) => f.id !== _folderId /** && !Object.hasProperty(f.folderId) */,
         )}
       />
-      <Flashcards />
+      <Flashcards
+        // flashcards={folder.filter(
+        //   (f) => f.id !== _folderId /** && !Object.hasProperty(f.folderId) */,
+        // )}
+      />
     </Container>
   );
 }
