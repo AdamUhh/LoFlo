@@ -15,13 +15,18 @@ export const selectFolder = async (
       parentId: string | null;
       subfolderCount: number;
       flashcardCount: number;
+      flashcardData: {
+        id: string;
+        question: string;
+        answer: string;
+      };
     }[]
   >
 > => {
   const session = await auth();
   if (!session?.user) redirect("/signin");
 
-  const whereCondition = sql`folder.parentId == ${folderId} AND folder.userId == ${session.user.id}`;
+  // const whereCondition = sql`folder.parentId == ${folderId} AND folder.userId == ${session.user.id}`;
 
   return db.all(sql`
   WITH RECURSIVE FolderHierarchy AS (
@@ -57,41 +62,19 @@ export const selectFolder = async (
         FROM FolderHierarchy descendants
         WHERE descendants.id = FolderHierarchy.id OR descendants.parentId = FolderHierarchy.id
       )
-    ) AS flashcardCount
+    ) AS flashcardCount,
+    (
+      SELECT GROUP_CONCAT(
+                JSON_OBJECT(
+                  'id', flashcard.id,
+                  'question', flashcard.question,
+                  'answer', flashcard.answer
+                )
+              ) AS flashcards
+      FROM flashcard
+      WHERE flashcard.folderId == FolderHierarchy.id AND flashcard.folderId == ${folderId}
+    ) AS flashcardData
   FROM FolderHierarchy
   WHERE depth = 0
-  ;
-  `);
-
-  // return db.all(sql`
-  // WITH RECURSIVE FolderHierarchy AS (
-  //   -- Anchor member: Select the current folder by folderId
-  //   SELECT
-  //     id,
-  //     parentId,
-  //     name,
-  //     description
-  //   FROM folder
-  //   WHERE id == ${folderId}
-
-  //   UNION ALL
-
-  //   -- Recursive member: Select subfolders with parentId equals current folder's id
-  //   SELECT
-  //     f.id,
-  //     f.parentId,
-  //     f.name,
-  //     f.description
-  //   FROM folder f
-  //   INNER JOIN FolderHierarchy fh ON f.parentId = fh.id
-  // )
-
-  // -- Select all columns from the recursive CTE
-  // SELECT
-  //   id,
-  //   parentId,
-  //   name,
-  //   description
-  // FROM FolderHierarchy;
-  // `);
+  ;`);
 };

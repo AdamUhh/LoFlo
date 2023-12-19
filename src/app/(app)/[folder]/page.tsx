@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Container from "src/components/Container";
 
 import Flashcards from "components/Folder/Flashcards";
+import { FolderShapeProps } from "components/Folder/Flashcards/types";
 import SubFoldersBar from "components/Folder/SubFoldersBar";
 import { selectFolder } from "db/queries/folder";
 import { notFound } from "next/navigation";
@@ -34,13 +35,13 @@ export default async function FolderPage({
 }: {
   params: { folder: string };
 }) {
-  const folder = await getFolder(_folderId);
+  const folder: FolderShapeProps[] = await getFolder(_folderId);
 
   const rootFolder = folder.filter((f) => f.id === _folderId);
 
   if (!!!rootFolder.length) return notFound();
 
-  console.log(folder)
+  console.log(folder);
 
   return (
     <Container title={folder[0].name}>
@@ -52,8 +53,18 @@ export default async function FolderPage({
       />
       <Flashcards
         // flashcards={folder.filter(
-        //   (f) => f.id !== _folderId /** && !Object.hasProperty(f.folderId) */,
-        // )}
+        //   (f) => f.flashcardData !== null /** && !Object.hasProperty(f.folderId) */,
+        // ).map(fl => fl.flashcardData)}
+        flashcardData={folder.reduce((result, folderItem) => {
+          if (folderItem.flashcardData !== null) {
+            // Parse the JSON string into an array of flashcard objects
+            const flashcards = JSON.parse(`[${folderItem.flashcardData}]`);
+
+            // Concatenate the flashcards to the result array
+            result = result.concat(flashcards);
+          }
+          return result;
+        }, [])}
       />
     </Container>
   );

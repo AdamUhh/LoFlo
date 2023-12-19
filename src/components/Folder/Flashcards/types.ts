@@ -1,8 +1,17 @@
+type T_FlashcardData = {
+  id: string;
+  question: string;
+  answer: string;
+};
+
 type FolderShapeProps = {
   id: string;
   name: string;
-  subfolderCount?: string | number;
-  flashcardCount?: string | number;
+  description: string;
+  parentId: string | null;
+  subfolderCount: number;
+  flashcardCount: number;
+  flashcardData: T_FlashcardData;
 };
 
 type T_CreateFlashcardReturn = {
@@ -21,5 +30,4 @@ type AddFolderTemplateProps =
       parentId?: string;
     };
 
-export type { AddFolderTemplateProps, FolderShapeProps, T_CreateFlashcardReturn };
-
+export type { AddFolderTemplateProps, FolderShapeProps, T_CreateFlashcardReturn, T_FlashcardData };

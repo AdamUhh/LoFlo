@@ -10,9 +10,9 @@ export default function SubFoldersBar({
 }) {
   return (
     <>
-      <OptionsBar parentId={parentId}/>
+      <OptionsBar subfolderCount={subFolders.length} parentId={parentId} />
       {!!subFolders.length ? (
-        <div className="relative mt-4 grid grid-flow-col grid-cols-[repeat(auto-fill,250px)] gap-4 overflow-x-auto overflow-y-hidden py-2">
+        <div className="relative mt-1 grid grid-flow-col grid-cols-[repeat(auto-fill,250px)] gap-4 overflow-x-auto overflow-y-hidden py-2">
           {subFolders.map((sf) => (
             <FolderTemplate key={sf.id} name={sf.name} id={sf.id} />
           ))}
