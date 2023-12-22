@@ -9,7 +9,6 @@ export default function OptionsBar() {
       </div>
       <div className="flex gap-2">
         <Sort />
-        {/* <Layout /> */}
       </div>
     </div>
   );

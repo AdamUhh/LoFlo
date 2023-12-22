@@ -16,8 +16,8 @@ Basic Outline:
     
   My Folders:
     ✔ Display a list of all folders created by the user. @done(23-12-15 11:47)
-    ☐ Each folder may show the number of:
-      ☐ flashcards,
+    ✔ Each folder may show the number of: @done(23-12-21 15:53)
+      ✔ flashcards, @done(23-12-21 15:53)
       ✔ subfolders @done(23-12-15 11:47)
     ☐ Options to 
       ☐ edit,
@@ -25,10 +25,10 @@ Basic Outline:
       ☐ sort/organize folders
     
   Folder:
-    ☐ Detailed view of a specific folder and its contents.
-    ☐ List of flashcards within the selected folder.
+    ✔ Detailed view of a specific folder and its contents. @done(23-12-21 15:53)
+    ✔ List of flashcards within the selected folder. @done(23-12-21 15:53)
     ☐ Options to add, edit, or delete flashcards.
-    ☐ Ability to navigate to the Flashcard Start page for that folder.
+    ✔ Ability to navigate to the Flashcard Start page for that folder. @done(23-12-21 15:53)
     ☐ Ability to choose folders to go into study mode
     
     Study Mode:

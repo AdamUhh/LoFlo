@@ -1,12 +1,11 @@
-import { Metadata } from "next";
-import Container from "src/components/Container";
-
 import Flashcards from "components/Folder/Flashcards";
-import { FolderShapeProps } from "components/Folder/Flashcards/types";
 import SubFoldersBar from "components/Folder/SubFoldersBar";
-import { selectFolder } from "db/queries/folder";
+import { selectFolder } from "db/queries/folders";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
+import Container from "src/components/Container";
+import { T_Folder } from "src/types/folder";
 
 export const getFolder = cache(async (folderId: string) => {
   return selectFolder(folderId);
@@ -35,27 +34,20 @@ export default async function FolderPage({
 }: {
   params: { folder: string };
 }) {
-  const folder: FolderShapeProps[] = await getFolder(_folderId);
+  const folders: T_Folder[] = await getFolder(_folderId);
 
-  const rootFolder = folder.filter((f) => f.id === _folderId);
+  const currentFolder = folders.filter((f) => f.id === _folderId);
 
-  if (!!!rootFolder.length) return notFound();
-
-  console.log(folder);
+  if (!!!currentFolder.length) return notFound();
 
   return (
-    <Container title={folder[0].name}>
+    <Container title={currentFolder[0].name}>
       <SubFoldersBar
-        parentId={rootFolder[0].parentId}
-        subFolders={folder.filter(
-          (f) => f.id !== _folderId /** && !Object.hasProperty(f.folderId) */,
-        )}
+        currentFolder={currentFolder[0]}
+        subFolders={folders.filter((f) => f.id !== _folderId && f.id !== currentFolder[0].parentId)}
       />
       <Flashcards
-        // flashcards={folder.filter(
-        //   (f) => f.flashcardData !== null /** && !Object.hasProperty(f.folderId) */,
-        // ).map(fl => fl.flashcardData)}
-        flashcardData={folder.reduce((result, folderItem) => {
+        flashcardData={folders.reduce((result, folderItem) => {
           if (folderItem.flashcardData !== null) {
             // Parse the JSON string into an array of flashcard objects
             const flashcards = JSON.parse(`[${folderItem.flashcardData}]`);

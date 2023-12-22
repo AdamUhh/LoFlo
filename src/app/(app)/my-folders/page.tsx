@@ -1,6 +1,6 @@
 import MyFolders from "components/MyFolders";
 import OptionsBar from "components/MyFolders/OptionsBar";
-import { selectFolders } from "db/queries/allFolders";
+import { selectFolders } from "db/queries/folders";
 import { Metadata } from "next";
 import Container from "src/components/Container";
 

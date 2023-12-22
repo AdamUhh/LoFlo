@@ -4,7 +4,7 @@ import { auth } from "auth";
 import { db } from "db/index";
 
 import { flashcard as flashcardsTable } from "db/schema/flashcards";
-import { sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { SQLiteRaw } from "drizzle-orm/sqlite-core/query-builders/raw";
 import { redirect, useParams } from "next/navigation";
 
@@ -17,27 +17,27 @@ export const selectFolders = async (
   const params = useParams();
   if (!session?.user) redirect("/signin");
 
-//   let whereCondition = sql`folder.userId == ${session.user.id}`;
-//   if (!!params.folder)
-//     whereCondition = sql`${whereCondition} AND  LIKE ${"%" + query + "%"}`;
-//  if (!!query?.length)
-//     whereCondition = sql`${whereCondition} AND folder.name LIKE ${"%" + query + "%"}`;
+  //   let whereCondition = sql`folder.userId == ${session.user.id}`;
+  //   if (!!params.folder)
+  //     whereCondition = sql`${whereCondition} AND  LIKE ${"%" + query + "%"}`;
+  //  if (!!query?.length)
+  //     whereCondition = sql`${whereCondition} AND folder.name LIKE ${"%" + query + "%"}`;
 
-//   const formattedOrder = !!order?.length
-//     ? order.toLowerCase() === "asc"
-//       ? sql`ASC`
-//       : sql`DESC`
-//     : sql`ASC`;
-//   let sortCondition = sql`f.name ${formattedOrder}`;
+  //   const formattedOrder = !!order?.length
+  //     ? order.toLowerCase() === "asc"
+  //       ? sql`ASC`
+  //       : sql`DESC`
+  //     : sql`ASC`;
+  //   let sortCondition = sql`f.name ${formattedOrder}`;
 
-//   if (!!sort?.length) {
-//     let formattedSort;
-//     if (sort === "Name") formattedSort = sql`f.name`;
-//     if (sort === "Created-At") formattedSort = sql`f.createdAt`;
-//     if (sort === "Last-Updated") formattedSort = sql`f.updatedAt`;
+  //   if (!!sort?.length) {
+  //     let formattedSort;
+  //     if (sort === "Name") formattedSort = sql`f.name`;
+  //     if (sort === "Created-At") formattedSort = sql`f.createdAt`;
+  //     if (sort === "Last-Updated") formattedSort = sql`f.updatedAt`;
 
-//     sortCondition = sql`${formattedSort} ${formattedOrder}`;
-//   }
+  //     sortCondition = sql`${formattedSort} ${formattedOrder}`;
+  //   }
 
   return db.all(sql`
    WITH RECURSIVE FolderHierarchy AS (
@@ -69,7 +69,7 @@ export const selectFolders = async (
     `);
 };
 
-export const insertFlashcard = ({
+const createFlashcard = ({
   question,
   answer,
   userId,
@@ -81,3 +81,26 @@ export const insertFlashcard = ({
     .values({ question, answer, userId, folderId, autoSpeakerMode })
     .returning({ flashcardId: flashcardsTable.id });
 };
+
+const updateFlashcard = ({
+  question,
+  answer,
+  id,
+  userId,
+  folderId,
+  autoSpeakerMode,
+}: typeof flashcardsTable.$inferInsert) => {
+  return db
+    .update(flashcardsTable)
+    .set({ question, answer, folderId, autoSpeakerMode })
+    .where(and(eq(flashcardsTable.id, id!), eq(flashcardsTable.userId, userId)))
+    .returning({ flashcardId: flashcardsTable.id });
+};
+
+const deleteFlashcard = ({ id, userId }: typeof flashcardsTable.$inferInsert) => {
+  return db
+    .delete(flashcardsTable)
+    .where(and(eq(flashcardsTable.id, id!), eq(flashcardsTable.userId, userId)));
+};
+
+export { createFlashcard, updateFlashcard, deleteFlashcard };

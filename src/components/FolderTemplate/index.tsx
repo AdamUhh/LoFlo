@@ -1,15 +1,15 @@
 import Link from "next/link";
 
 import { Button } from "shadcn/components/ui/button";
+import { T_FolderTemplate } from "src/types/folder";
 import FolderIcon from "./FolderIcon";
-import { FolderShapeProps } from "./types";
 
 export default function FolderTemplate({
   id,
   name,
   subfolderCount = "0",
   flashcardCount = "0",
-}: FolderShapeProps) {
+}: T_FolderTemplate) {
   return (
     <Button
       asChild

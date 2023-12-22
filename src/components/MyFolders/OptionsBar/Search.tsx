@@ -1,7 +1,7 @@
 "use client";
 
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Input } from "shadcn/components/ui/input";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
 export default function Search() {
   const searchParams = useSearchParams();
   const pathname = usePathname();

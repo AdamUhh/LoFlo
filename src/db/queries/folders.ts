@@ -4,60 +4,10 @@ import { auth } from "auth";
 import { db } from "db/index";
 
 import { folder as foldersTable } from "db/schema/folders";
-import { sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { SQLiteRaw } from "drizzle-orm/sqlite-core/query-builders/raw";
 import { redirect } from "next/navigation";
-// const selectRootFoldersTable = db.$with("selectRootFoldersTable").as(
-//   db
-//     .select()
-//     .from(foldersTable)
-//     .where(and(isNull(foldersTable.parentId), eq(foldersTable.userId, sql.placeholder("userId")))),
-// );
 
-// export const selectFolders = db
-//   .with(selectRootFoldersTable)
-//   .select({
-//     id: selectRootFoldersTable.id,
-//     name: selectRootFoldersTable.name,
-//     flashcardCount: sql<number>`cast(count(${flashcardsTable.id}) as int)`,
-//     subfolderCount: sql<number>`cast(count(${foldersTable.parentId}) as int)`,
-//   })
-//   .from(selectRootFoldersTable)
-//   .leftJoin(flashcardsTable, eq(flashcardsTable.folderId, selectRootFoldersTable.id))
-//   .leftJoin(
-//     foldersTable,
-//     or(isNull(foldersTable.parentId), eq(foldersTable.parentId, selectRootFoldersTable.id)),
-//   )
-//   .prepare();
-
-// ----------------------
-
-// WITH RECURSIVE FolderHierarchy AS (
-//     -- Anchor member: Select root folders
-//     SELECT id, parent_id, name, 0 AS depth
-//     FROM folder
-//     WHERE parent_id IS NULL AND folder.userId == ${userId}
-
-//     UNION ALL
-
-//     -- Recursive member: Select subfolders
-//     SELECT f.id, f.parent_id, f.name, fh.depth + 1 AS depth
-//     FROM folder f
-//     JOIN FolderHierarchy fh ON f.parent_id = fh.id
-//   )
-
-//   -- Select root folders with the count of subfolders
-//   SELECT
-//     root_folders.id AS root_folder_id,
-//     root_folders.name AS root_folder_name,
-//     COUNT(subfolders.id) AS subfolder_count
-//   FROM (
-//     SELECT id, name
-//     FROM FolderHierarchy
-//     WHERE depth = 0
-//   ) AS root_folders
-//   LEFT JOIN folder subfolders ON root_folders.id = subfolders.parent_id
-//   GROUP BY root_folders.id, root_folders.name;
 
 export const selectFolders = async (
   query?: string,
@@ -65,9 +15,11 @@ export const selectFolders = async (
   order?: string,
 ): Promise<SQLiteRaw<{ id: string; name: string; subfolderCount: string }[]>> => {
   const session = await auth();
+
   if (!session?.user) redirect("/signin");
 
-  let whereCondition = sql`parentId IS NULL AND folder.userId == ${session.user.id}`;
+  let whereCondition = sql`parentId IS NULL AND folder.userId = ${session.user.id}`;
+
   if (!!query?.length)
     whereCondition = sql`${whereCondition} AND folder.name LIKE ${"%" + query + "%"}`;
 
@@ -76,13 +28,15 @@ export const selectFolders = async (
       ? sql`ASC`
       : sql`DESC`
     : sql`ASC`;
+
   let sortCondition = sql`f.name ${formattedOrder}`;
 
   if (!!sort?.length) {
     let formattedSort;
+
     if (sort === "Name") formattedSort = sql`f.name`;
-    if (sort === "Created-At") formattedSort = sql`f.createdAt`;
-    if (sort === "Last-Updated") formattedSort = sql`f.updatedAt`;
+    else if (sort === "Created-At") formattedSort = sql`f.createdAt`;
+    else if (sort === "Last-Updated") formattedSort = sql`f.updatedAt`;
 
     sortCondition = sql`${formattedSort} ${formattedOrder}`;
   }
@@ -98,10 +52,9 @@ export const selectFolders = async (
     
     -- Recursive member: Select subfolders
     SELECT f.id, f.parentId, f.createdAt, f.updatedAt, f.name, fh.depth + 1 AS depth
-    FROM folder f
+    FROM folder AS f
     JOIN FolderHierarchy fh ON f.parentId = fh.id
     ORDER BY ${sortCondition}
-
   )
 
   -- Select root folders with the count of subfolders and flashcards
@@ -110,7 +63,7 @@ export const selectFolders = async (
     FolderHierarchy.name,
     (
       SELECT COUNT(*)
-      FROM FolderHierarchy subfolders
+      FROM FolderHierarchy AS subfolders
       WHERE subfolders.parentId = FolderHierarchy.id AND subfolders.depth > 0
     ) AS subfolderCount,
     (
@@ -127,25 +80,24 @@ export const selectFolders = async (
   ;
 `);
 
-
   // return db.all(sql`
   //  WITH RECURSIVE FolderHierarchy AS (
   //   -- Anchor member: Select root folders
   //   SELECT id, parentId, createdAt, updatedAt, name, 0 AS depth
   //   FROM folder
   //   WHERE ${whereCondition}
-    
+
   //   UNION ALL
-    
+
   //   -- Recursive member: Select subfolders
   //   SELECT f.id, f.parentId, f.createdAt, f.updatedAt, f.name, fh.depth + 1 AS depth
   //   FROM folder f
   //   JOIN FolderHierarchy fh ON f.parentId = fh.id
   //   ORDER BY ${sortCondition}
   // )
-  
+
   // -- Select root folders with the count of subfolders
-  // SELECT 
+  // SELECT
   //   id,
   //   name,
   //   (
@@ -159,7 +111,7 @@ export const selectFolders = async (
   //   `);
 };
 
-export const insertFolder = ({
+const createFolder = ({
   name,
   description,
   userId,
@@ -171,3 +123,98 @@ export const insertFolder = ({
     .values({ name, description, userId, parentId, autoSpeakerMode })
     .returning({ folderId: foldersTable.id });
 };
+
+const updateFolder = ({
+  id,
+  name,
+  description,
+  userId,
+  autoSpeakerMode,
+}: typeof foldersTable.$inferInsert) => {
+  return db
+    .update(foldersTable)
+    .set({ name, description, autoSpeakerMode })
+    .where(and(eq(foldersTable.id, id!), eq(foldersTable.userId, userId)))
+    .returning({ name: foldersTable.name });
+};
+
+const deleteFolder = ({ id, userId }: typeof foldersTable.$inferInsert) => {
+  return db
+    .delete(foldersTable)
+    .where(and(eq(foldersTable.id, id!), eq(foldersTable.userId, userId)));
+};
+
+const selectFolder = async (
+  folderId: string,
+): Promise<
+  SQLiteRaw<
+    {
+      id: string;
+      name: string;
+      description: string;
+      parentId: string | null;
+      subfolderCount: number;
+      flashcardCount: number;
+      flashcardData: {
+        id: string;
+        question: string;
+        answer: string;
+      };
+    }[]
+  >
+> => {
+  const session = await auth();
+  if (!session?.user) redirect("/signin");
+
+  return db.all(sql`
+  WITH RECURSIVE FolderHierarchy AS (
+    -- Anchor member: Select root folder and its subfolders (matching parentId)
+    SELECT id, parentId, description, name, 0 AS depth
+    FROM folder
+    WHERE folder.userId == ${session.user.id} AND (folder.id == ${folderId} OR folder.parentId == ${folderId})
+    
+    UNION ALL
+  
+    -- Recursive member: Select subfolders
+    SELECT f.id, f.parentId, f.description, f.name, fh.depth + 1 AS depth
+    FROM folder f
+    INNER JOIN FolderHierarchy fh ON f.parentId = fh.id
+  )
+  
+  -- Select root folder with the count of subfolders and flashcards
+  SELECT 
+    FolderHierarchy.id AS id,
+    FolderHierarchy.name AS name,
+    FolderHierarchy.description AS description,
+    FolderHierarchy.parentId AS parentId,
+    (
+      SELECT COUNT(*)
+      FROM FolderHierarchy subfolders
+      WHERE subfolders.parentId == FolderHierarchy.id  AND subfolders.depth > 1
+    ) AS subfolderCount,
+    (
+      SELECT COUNT(*)
+      FROM flashcard
+      WHERE flashcard.folderId IN (
+        SELECT id
+        FROM FolderHierarchy descendants
+        WHERE descendants.id = FolderHierarchy.id OR descendants.parentId = FolderHierarchy.id
+      )
+    ) AS flashcardCount,
+    (
+      SELECT GROUP_CONCAT(
+                JSON_OBJECT(
+                  'id', flashcard.id,
+                  'question', flashcard.question,
+                  'answer', flashcard.answer
+                )
+              ) AS flashcards
+      FROM flashcard
+      WHERE flashcard.folderId == FolderHierarchy.id AND flashcard.folderId == ${folderId}
+    ) AS flashcardData
+  FROM FolderHierarchy
+  WHERE depth = 0
+  ;`);
+};
+
+export { createFolder, deleteFolder, selectFolder, updateFolder };

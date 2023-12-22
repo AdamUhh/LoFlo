@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import Navbar from "../LayoutNavbar";
+import Navbar from "./navbar";
 
 type ContainerProps = {
   title?: string;

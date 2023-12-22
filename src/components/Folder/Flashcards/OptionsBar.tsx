@@ -1,6 +1,6 @@
 import { Play } from "lucide-react";
 import { Button } from "shadcn/components/ui/button";
-import AddFlashcardButton from "./AddFlashcard";
+import AddFlashcardButton from "../../FlashcardTemplate/AddFlashcard";
 
 export default function OptionsBar({ flashcardCount }: { flashcardCount: string | number }) {
   return (
