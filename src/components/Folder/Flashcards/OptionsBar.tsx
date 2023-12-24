@@ -1,6 +1,7 @@
 import { Play } from "lucide-react";
 import { Button } from "shadcn/components/ui/button";
 import AddFlashcardButton from "../../FlashcardTemplate/AddFlashcard";
+import Filters from "./Filters";
 
 export default function OptionsBar({ flashcardCount }: { flashcardCount: string | number }) {
   return (
@@ -16,7 +17,14 @@ export default function OptionsBar({ flashcardCount }: { flashcardCount: string 
           </Button>
         </div>
       </div>
-      <div className="w-full text-left text-sm opacity-50">No. of flashcards: {flashcardCount}</div>
+      <div className="flex w-full flex-col">
+        <div className="w-full text-left text-sm opacity-50">
+          No. of flashcards: {flashcardCount}
+        </div>
+        <div className="w-full flex justify-center">
+          <Filters />
+        </div>
+      </div>
     </>
   );
 }

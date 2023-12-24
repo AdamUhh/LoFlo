@@ -19,17 +19,22 @@ Basic Outline:
     ✔ Each folder may show the number of: @done(23-12-21 15:53)
       ✔ flashcards, @done(23-12-21 15:53)
       ✔ subfolders @done(23-12-15 11:47)
-    ☐ Options to 
-      ☐ edit,
-      ☐ delete,
-      ☐ sort/organize folders
+    ✔ Options to @done(23-12-23 14:27)
+      ✔ search @done(23-12-23 14:53)
+      ✔ edit, @done(23-12-23 14:27)
+      ✔ delete, @done(23-12-23 14:27)
+      ✔ sort folders @done(23-12-23 14:27)
     
   Folder:
     ✔ Detailed view of a specific folder and its contents. @done(23-12-21 15:53)
     ✔ List of flashcards within the selected folder. @done(23-12-21 15:53)
-    ☐ Options to add, edit, or delete flashcards.
     ✔ Ability to navigate to the Flashcard Start page for that folder. @done(23-12-21 15:53)
-    ☐ Ability to choose folders to go into study mode
+    ☐ Ability to queue folders and flashcards to go into study mode
+    ✔ Options to @done(23-12-23 14:27)
+      ☐ search
+      ✔ edit, @done(23-12-23 14:27)
+      ✔ delete, @done(23-12-23 14:27)
+      ☐ sort flashcards
     
     Study Mode:
     ☐ Provide a focused environment for studying flashcards.
@@ -41,8 +46,6 @@ Basic Outline:
 
 Todo for pages:
   My Folders:
-    ☐ Perhaps create a dropdown on hover (absolute, bottom) that shows an expand, edit, delete option
-      ☐ Mobile users are not able to see this?
-      ☐ Will need to refactor code to generalize Dialog and reduce redunduncy
     ☐ Find a way to show info of a folder,
-      ☐ Either via info button which opens a modal, or on hover (and a set space on the page )
+      ☐ Either via info button which opens a modal, 
+      ☐ or on hover (and a set container/space on size the page showing details), like in fmoviez.to

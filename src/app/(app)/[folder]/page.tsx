@@ -49,10 +49,12 @@ export default async function FolderPage({
       <Flashcards
         flashcardData={folders.reduce((result, folderItem) => {
           if (folderItem.flashcardData !== null) {
-            // Parse the JSON string into an array of flashcard objects
+            // ? Below is required for parsing sql json
+
+            // ? Parse the JSON string into an array of flashcard objects
             const flashcards = JSON.parse(`[${folderItem.flashcardData}]`);
 
-            // Concatenate the flashcards to the result array
+            // ? Concatenate the flashcards to the result array
             result = result.concat(flashcards);
           }
           return result;

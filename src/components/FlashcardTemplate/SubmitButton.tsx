@@ -13,6 +13,7 @@ export default function SubmitButton({
     <Button
       type="submit"
       disabled={pending}
+      
       className={cn(mode === "delete" && "hover:bg-destructive")}
     >
       {pending ? (

@@ -5,17 +5,20 @@ import { deleteFlashcard, createFlashcard, updateFlashcard } from "db/queries/fl
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { T_CRUDReturn } from "src/types/action";
+import { MAX_TEXTAREA_CHAR } from "src/utils/constants";
+
+
 
 const createSchema = z.object({
   flashcardQuestion: z
     .string()
     .trim()
     .min(1, { message: "Question field has to be filled." })
-    .max(200, { message: "Question too long! Max Characters: 200" }),
+    .max(MAX_TEXTAREA_CHAR, { message: `Question too long! Max Characters: ${MAX_TEXTAREA_CHAR}` }),
   flashcardAnswer: z
     .string()
     .trim()
-    .max(200, { message: "Answer too long! Max Characters: 200" })
+    .max(MAX_TEXTAREA_CHAR, { message: `Answer too long! Max Characters: ${MAX_TEXTAREA_CHAR}` })
     .optional(),
   speakerMode: z.union([z.literal("on"), z.literal(null)]),
   flashcardFolderParentId: z.string().trim(),

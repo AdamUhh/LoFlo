@@ -4,23 +4,18 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
+import { TextareaWithCount } from "shadcn/components/custom/textareacount";
 import { Button } from "shadcn/components/ui/button";
 import { Checkbox } from "shadcn/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "shadcn/components/ui/dialog";
+import { Dialog, DialogFooter, DialogTrigger } from "shadcn/components/ui/dialog";
 import { Input } from "shadcn/components/ui/input";
 import { Label } from "shadcn/components/ui/label";
-import { Textarea } from "shadcn/components/ui/textarea";
 import { useToast } from "shadcn/components/ui/use-toast";
+import { T_CRUDReturn } from "src/types/action";
+import { FlashcardDialogContentLayout } from "./DialogLayout";
 import SubmitButton from "./SubmitButton";
 import { createFlashcardAction } from "./action";
-import { T_CRUDReturn } from "src/types/action";
+import { MAX_TEXTAREA_CHAR } from "src/utils/constants";
 
 export default function AddFlashcardButton() {
   const params = useParams();
@@ -34,17 +29,14 @@ export default function AddFlashcardButton() {
           <h4>+ Add Flashcard</h4>
         </Button>
       </DialogTrigger>
-      <DialogContent className="3xl:max-w-4xl max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>Add Flashcard</DialogTitle>
-        </DialogHeader>
+      <FlashcardDialogContentLayout title="Add Flashcard">
         <div className="flex items-center space-x-2">
           <DialogContents
             setOpen={setOpen}
             flashcardFolderParentId={hasFolder ? (params.folder as string) : undefined}
           />
         </div>
-      </DialogContent>
+      </FlashcardDialogContentLayout>
     </Dialog>
   );
 }
@@ -86,22 +78,22 @@ function DialogContents({
   }, [formState.status]);
 
   return (
-    <form action={onFormSubmit} className="w-full space-y-6">
-      <div className="grid w-full items-center gap-1.5">
-        <div className="gap-1 md:flex">
-          <Textarea
-            placeholder="Question"
-            name="flashcardQuestion"
-            id="flashcardQuestion"
-            className="min-h-[150px] whitespace-pre"
-          />
-          <Textarea
-            placeholder="Answer"
-            name="flashcardAnswer"
-            id="flashcardAnswer"
-            className="min-h-[150px] whitespace-pre"
-          />
-        </div>
+    <form action={onFormSubmit} className="flex h-full w-full flex-col">
+      <div className="flex h-full flex-col gap-1 md:flex-row">
+        <TextareaWithCount
+          maxCount={MAX_TEXTAREA_CHAR}
+          placeholder="Question"
+          name="flashcardQuestion"
+          id="flashcardQuestion"
+          className="inline-block h-full min-h-[150px] w-full resize-none whitespace-pre-wrap break-words"
+        />
+        <TextareaWithCount
+          maxCount={MAX_TEXTAREA_CHAR}
+          placeholder="Answer"
+          name="flashcardAnswer"
+          id="flashcardAnswer"
+          className="inline-block h-full min-h-[150px] w-full resize-none whitespace-pre-wrap break-words"
+        />
         {!!flashcardFolderParentId?.length && (
           <Input
             type="text"
@@ -113,7 +105,7 @@ function DialogContents({
           />
         )}
       </div>
-      <div className="items-top flex space-x-2">
+      <div className="items-top mt-4 flex gap-2">
         <Checkbox id="speakerMode" name="speakerMode" />
         <div className="grid gap-1.5 leading-none">
           <Label
@@ -135,7 +127,7 @@ function DialogContents({
           <p className="text-red-500">{formState.returnMessage || "Failed to create flashcard"}</p>
         </div>
       )}
-      <DialogFooter>
+      <DialogFooter className="mt-2">
         <SubmitButton />
       </DialogFooter>
     </form>

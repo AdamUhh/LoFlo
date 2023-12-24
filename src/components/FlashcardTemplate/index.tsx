@@ -38,7 +38,7 @@ export default function FlashcardTemplate({ flashcard }: { flashcard: T_Flashcar
             />
           </div>
           <div className="flex h-full w-full flex-col justify-between">
-            <h3 className="mb-auto whitespace-pre-wrap text-lg">
+            <h3 className="mb-auto whitespace-pre-wrap text-md overflow-hidden [display:-webkit-box] [-webkit-line-clamp:5] [-webkit-box-orient:vertical]">
               {showAnswer ? flashcard.answer : flashcard.question}
             </h3>
             <div className="flex w-full justify-between">
