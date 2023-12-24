@@ -17,11 +17,9 @@ export default function OptionsBar({ flashcardCount }: { flashcardCount: string 
           </Button>
         </div>
       </div>
-      <div className="flex w-full flex-col">
-        <div className="w-full text-left text-sm opacity-50">
-          No. of flashcards: {flashcardCount}
-        </div>
-        <div className="w-full flex justify-center">
+      <div className="flex w-fit flex-col">
+        <div className="text-left text-sm opacity-50">No. of flashcards: {flashcardCount}</div>
+        <div className="w-fit">
           <Filters />
         </div>
       </div>

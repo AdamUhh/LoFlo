@@ -1,44 +1,76 @@
-"use client"
+"use client";
 
+import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Button } from "shadcn/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "shadcn/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "shadcn/components/ui/dropdown-menu";
+
+type Checked = DropdownMenuCheckboxItemProps["checked"];
+
+const initialState = {
+  all: true,
+  bookmarked: false,
+  incorrect: false,
+  skipped: false,
+};
 
 export default function Filter() {
+  const [filters, setFilters] = useState<Record<string, Checked>>(initialState);
 
-  const [position, setPosition] = useState("bottom")
- 
+  function handleAllChange() {
+    setFilters(initialState);
+  }
+
+  function handleChange(option: keyof typeof filters) {
+    setFilters((prevFilters) => {
+      const newFilters = {
+        ...prevFilters,
+        [option]: !prevFilters[option],
+      };
+
+      // Check 'All' if all other options are unchecked
+      if (Object.values(newFilters).every((value) => !value)) {
+        newFilters.all = true;
+      } else {
+        newFilters.all = false;
+      }
+
+      return newFilters;
+    });
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">Open</Button>
+        <Button variant="outline" className="flex gap-1">
+          <ChevronDown size={15} />
+          <span>Filters</span>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Panel Position</DropdownMenuLabel>
+        <DropdownMenuCheckboxItem checked={filters.all} onCheckedChange={handleAllChange}>
+          All
+        </DropdownMenuCheckboxItem>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
-          <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
+        {Object.keys(filters)
+          .filter((key) => key !== "all")
+          .map((key) => (
+            <DropdownMenuCheckboxItem
+              key={key}
+              checked={filters[key as keyof typeof filters]}
+              onCheckedChange={() => handleChange(key as keyof typeof filters)}
+            >
+              {key.charAt(0).toUpperCase() + key.slice(1)}
+            </DropdownMenuCheckboxItem>
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
-
-  // return (
-    // <ToggleGroup type="single">
-    //   <ToggleGroupItem value="all" aria-label="Toggle all">
-    //     All
-    //   </ToggleGroupItem>
-    //   <ToggleGroupItem value="bookmarked" aria-label="Toggle bookmarked">
-    //     Bookmarked
-    //   </ToggleGroupItem>
-    //   <ToggleGroupItem value="incorrect" aria-label="Toggle incorrect">
-    //     Incorrect
-    //   </ToggleGroupItem>
-    //   <ToggleGroupItem value="skipped" aria-label="Toggle skipped">
-    //     Skipped
-    //   </ToggleGroupItem>
-    // </ToggleGroup>
-  // );
+  );
 }
