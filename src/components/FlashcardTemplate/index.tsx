@@ -3,13 +3,20 @@
 import DeleteFlashcardDialog from "components/FlashcardTemplate/DeleteFlashcard";
 import FlashcardDropdownOptions from "components/FlashcardTemplate/DropdownOptions";
 import EditFlashcardDialog from "components/FlashcardTemplate/EditFlashcard";
-import { Bookmark, FlipHorizontal, Volume2 } from "lucide-react";
+import { FlipHorizontal, Volume2 } from "lucide-react";
 import { MouseEvent, useState } from "react";
 import { Button } from "shadcn/components/ui/button";
 import { cn } from "shadcn/utils";
 import { T_FlashcardData } from "src/types/folder";
+import BookmarkButton from "./BookmarkButton";
 
-export default function FlashcardTemplate({ flashcard }: { flashcard: T_FlashcardData }) {
+export default function FlashcardTemplate({
+  flashcard,
+  folderId,
+}: {
+  flashcard: T_FlashcardData;
+  folderId: string;
+}) {
   const [showAnswer, setShowAnswer] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -38,7 +45,7 @@ export default function FlashcardTemplate({ flashcard }: { flashcard: T_Flashcar
             />
           </div>
           <div className="flex h-full w-full flex-col justify-between">
-            <h3 className="mb-auto whitespace-pre-wrap text-md overflow-hidden [display:-webkit-box] [-webkit-line-clamp:5] [-webkit-box-orient:vertical]">
+            <h3 className="text-md mb-auto overflow-hidden whitespace-pre-wrap [-webkit-box-orient:vertical] [-webkit-line-clamp:5] [display:-webkit-box]">
               {showAnswer ? flashcard.answer : flashcard.question}
             </h3>
             <div className="flex w-full justify-between">
@@ -55,9 +62,11 @@ export default function FlashcardTemplate({ flashcard }: { flashcard: T_Flashcar
                 <Button variant={"secondary"} className="h-fit p-1">
                   <Volume2 size={20} />
                 </Button>
-                <Button variant={"secondary"} className="h-fit p-1">
-                  <Bookmark size={20} />
-                </Button>
+                <BookmarkButton
+                  bookmarked={flashcard.bookmarked}
+                  folderId={folderId}
+                  flashcardId={flashcard.id}
+                />
               </div>
             </div>
           </div>

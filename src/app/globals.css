@@ -69,7 +69,7 @@
   }
 
   input,
-  textarea {
+  textarea, button {
     @apply focus-visible:border-foreground/50 focus-visible:ring-0 !important;
   }
 }

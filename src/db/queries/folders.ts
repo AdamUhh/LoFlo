@@ -8,7 +8,6 @@ import { and, eq, sql } from "drizzle-orm";
 import { SQLiteRaw } from "drizzle-orm/sqlite-core/query-builders/raw";
 import { redirect } from "next/navigation";
 
-
 export const selectFolders = async (
   query?: string,
   sort?: string,
@@ -159,6 +158,7 @@ const selectFolder = async (
         id: string;
         question: string;
         answer: string;
+        bookmarked: boolean;
       };
     }[]
   >
@@ -206,10 +206,12 @@ const selectFolder = async (
                 JSON_OBJECT(
                   'id', flashcard.id,
                   'question', flashcard.question,
-                  'answer', flashcard.answer
+                  'answer', flashcard.answer,
+                  'bookmarked', flashcardStatistics.bookmarked
                 )
               ) AS flashcards
       FROM flashcard
+      LEFT JOIN flashcardStatistics ON flashcard.id = flashcardStatistics.flashcardId
       WHERE flashcard.folderId == FolderHierarchy.id AND flashcard.folderId == ${folderId}
     ) AS flashcardData
   FROM FolderHierarchy

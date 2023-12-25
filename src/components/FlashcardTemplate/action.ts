@@ -1,13 +1,16 @@
 "use server";
 
 import { auth } from "auth";
-import { deleteFlashcard, createFlashcard, updateFlashcard } from "db/queries/flashcards";
+import {
+  deleteFlashcard,
+  createFlashcard,
+  updateFlashcard,
+  bookmarkFlashcard,
+} from "db/queries/flashcards";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { T_CRUDReturn } from "src/types/action";
 import { MAX_TEXTAREA_CHAR } from "src/utils/constants";
-
-
 
 const createSchema = z.object({
   flashcardQuestion: z
@@ -181,4 +184,47 @@ async function deleteFlashcardAction(_: any, formData: FormData): Promise<T_CRUD
   }
 }
 
-export { createFlashcardAction, updateFlashcardAction, deleteFlashcardAction };
+async function bookmarkFlashcardAction({
+  folderId,
+  flashcardId,
+  bookmarked,
+}: {
+  bookmarked: boolean;
+  folderId: string;
+  flashcardId: string;
+}) {
+  const session = await auth();
+
+  if (!session?.user.id)
+    return {
+      status: "error",
+      returnMessage: "No user found",
+    };
+
+  try {
+    await bookmarkFlashcard({
+      flashcardId,
+      userId: session.user.id,
+      bookmarked,
+    });
+
+    revalidatePath(!!folderId ? `/${folderId}` : "/my-folders");
+
+    return {
+      status: "success",
+      returnMessage: "Bookmarked flashcard",
+    };
+  } catch (e) {
+    return {
+      status: "error",
+      returnMessage: `Failed to bookmark flashcard\n${e}`,
+    };
+  }
+}
+
+export {
+  createFlashcardAction,
+  updateFlashcardAction,
+  deleteFlashcardAction,
+  bookmarkFlashcardAction,
+};

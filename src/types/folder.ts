@@ -2,6 +2,7 @@ type T_FlashcardData = {
   id: string;
   question: string;
   answer: string;
+  bookmarked: boolean;
 };
 
 type T_Folder = {

@@ -47,6 +47,7 @@ export default async function FolderPage({
         subFolders={folders.filter((f) => f.id !== _folderId && f.id !== currentFolder[0].parentId)}
       />
       <Flashcards
+        currentFolderId={currentFolder[0].id}
         flashcardData={folders.reduce((result, folderItem) => {
           if (folderItem.flashcardData !== null) {
             // ? Below is required for parsing sql json
