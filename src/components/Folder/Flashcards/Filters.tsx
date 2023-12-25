@@ -2,6 +2,7 @@
 
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "shadcn/components/ui/button";
 import {
@@ -24,26 +25,44 @@ const initialState = {
 export default function Filter() {
   const [filters, setFilters] = useState<Record<string, Checked>>(initialState);
 
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  function handleFilter(newFilters: Record<string, Checked>) {
+    const params = new URLSearchParams(searchParams);
+
+    const filterValues = Object.entries(newFilters)
+      .map(([k, v]) => v && k)
+      .filter(Boolean);
+
+    if (!filterValues.includes("all")) params.set("filter", filterValues.join(","));
+    else params.delete("filter");
+
+    replace(`${pathname}?${params.toString()}`);
+  }
+
   function handleAllChange() {
     setFilters(initialState);
+    handleFilter(initialState);
   }
 
   function handleChange(option: keyof typeof filters) {
-    setFilters((prevFilters) => {
-      const newFilters = {
-        ...prevFilters,
-        [option]: !prevFilters[option],
-      };
+    const newFilters = {
+      ...filters,
+      [option]: !filters[option],
+    };
 
-      // Check 'All' if all other options are unchecked
-      if (Object.values(newFilters).every((value) => !value)) {
-        newFilters.all = true;
-      } else {
-        newFilters.all = false;
-      }
+    // Check 'All' if all other options are unchecked
+    if (Object.values(newFilters).every((value) => !value)) {
+      newFilters.all = true;
+    } else {
+      newFilters.all = false;
+    }
 
-      return newFilters;
-    });
+    setFilters(newFilters);
+
+    handleFilter(newFilters);
   }
 
   return (

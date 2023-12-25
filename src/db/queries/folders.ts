@@ -78,36 +78,6 @@ export const selectFolders = async (
   WHERE depth = 0
   ;
 `);
-
-  // return db.all(sql`
-  //  WITH RECURSIVE FolderHierarchy AS (
-  //   -- Anchor member: Select root folders
-  //   SELECT id, parentId, createdAt, updatedAt, name, 0 AS depth
-  //   FROM folder
-  //   WHERE ${whereCondition}
-
-  //   UNION ALL
-
-  //   -- Recursive member: Select subfolders
-  //   SELECT f.id, f.parentId, f.createdAt, f.updatedAt, f.name, fh.depth + 1 AS depth
-  //   FROM folder f
-  //   JOIN FolderHierarchy fh ON f.parentId = fh.id
-  //   ORDER BY ${sortCondition}
-  // )
-
-  // -- Select root folders with the count of subfolders
-  // SELECT
-  //   id,
-  //   name,
-  //   (
-  //     SELECT COUNT(*)
-  //     FROM FolderHierarchy subfolders
-  //     WHERE subfolders.parentId = FolderHierarchy.id AND subfolders.depth > 0
-  //   ) AS subfolderCount
-  // FROM FolderHierarchy
-  // WHERE depth = 0
-  // ;
-  //   `);
 };
 
 const createFolder = ({
@@ -145,6 +115,9 @@ const deleteFolder = ({ id, userId }: typeof foldersTable.$inferInsert) => {
 
 const selectFolder = async (
   folderId: string,
+  query?: string,
+  filters?: string[],
+  order?: string,
 ): Promise<
   SQLiteRaw<
     {
@@ -165,6 +138,25 @@ const selectFolder = async (
 > => {
   const session = await auth();
   if (!session?.user) redirect("/signin");
+
+  let whereCondition = sql`flashcard.folderId == FolderHierarchy.id AND flashcard.folderId == ${folderId}`;
+
+  // if (!!query?.length)
+
+  if (!!filters?.length) {
+    if (filters.includes("bookmarked"))
+      whereCondition = sql`${whereCondition} AND flashcardStatistics.bookmarked == TRUE`;
+    if (filters.includes("incorrect"))
+      whereCondition = sql`${whereCondition} AND flashcardStatistics.incorrect > 0`;
+    if (filters.includes("skipped"))
+      whereCondition = sql`${whereCondition} AND flashcardStatistics.skipped > 0`;
+  }
+  const formattedOrder = !!order?.length
+    ? order.toLowerCase() === "asc"
+      ? sql`ASC`
+      : sql`DESC`
+    : sql`ASC`;
+  let sortCondition = sql`flashcard.question ${formattedOrder}`;
 
   return db.all(sql`
   WITH RECURSIVE FolderHierarchy AS (
@@ -203,16 +195,17 @@ const selectFolder = async (
     ) AS flashcardCount,
     (
       SELECT GROUP_CONCAT(
-                JSON_OBJECT(
-                  'id', flashcard.id,
-                  'question', flashcard.question,
-                  'answer', flashcard.answer,
-                  'bookmarked', flashcardStatistics.bookmarked
-                )
-              ) AS flashcards
+        JSON_OBJECT(
+          'id', flashcard.id,
+          'question', flashcard.question,
+          'answer', flashcard.answer,
+          'bookmarked', flashcardStatistics.bookmarked
+        )
+      ) AS flashcards
       FROM flashcard
       LEFT JOIN flashcardStatistics ON flashcard.id = flashcardStatistics.flashcardId
-      WHERE flashcard.folderId == FolderHierarchy.id AND flashcard.folderId == ${folderId}
+      WHERE ${whereCondition}
+      ORDER BY ${sortCondition}
     ) AS flashcardData
   FROM FolderHierarchy
   WHERE depth = 0

@@ -7,18 +7,26 @@ import { cache } from "react";
 import Container from "src/components/Container";
 import { T_Folder } from "src/types/folder";
 
-export const getFolder = cache(async (folderId: string) => {
-  return selectFolder(folderId);
-});
+export const getFolder = cache(
+  async (folderId: string, query?: string, filter?: string, order?: string) => {
+    return selectFolder(folderId, query, filter?.split(","), order);
+  },
+);
 
 export async function generateMetadata({
+  searchParams,
   params: { folder: folderId },
 }: {
   params: { folder: string };
+  searchParams?: { query?: string; filter?: string; order?: string; page?: string };
 }): Promise<Metadata> {
-  const folder = await getFolder(folderId);
+  const query = searchParams?.query || "";
+  const filter = searchParams?.filter || "";
+  const order = searchParams?.order || "";
 
-  const rootFolder = folder.filter((f) => f.id === folderId);
+  const folders: T_Folder[] = await getFolder(folderId, query, filter, order);
+
+  const rootFolder = folders.filter((f) => f.id === folderId);
 
   // Source: https://github.com/vercel/next.js/discussions/49925#discussioncomment-6386693
   // ? return blank metadata, so not-found.tsx can catch it
@@ -30,11 +38,17 @@ export async function generateMetadata({
 }
 
 export default async function FolderPage({
+  searchParams,
   params: { folder: _folderId },
 }: {
   params: { folder: string };
+  searchParams?: { query?: string; filter?: string; order?: string; page?: string };
 }) {
-  const folders: T_Folder[] = await getFolder(_folderId);
+  const query = searchParams?.query || "";
+  const filter = searchParams?.filter || "";
+  const order = searchParams?.order || "";
+
+  const folders: T_Folder[] = await getFolder(_folderId, query, filter, order);
 
   const currentFolder = folders.filter((f) => f.id === _folderId);
 

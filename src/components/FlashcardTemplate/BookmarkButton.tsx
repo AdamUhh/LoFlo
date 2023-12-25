@@ -1,11 +1,11 @@
 "use client";
 import { Bookmark, BookmarkCheck } from "lucide-react";
-import { Button } from "shadcn/components/ui/button";
-import { bookmarkFlashcardAction } from "./action";
-import { useFormState } from "react-dom";
-import { T_CRUDReturn } from "src/types/action";
 import { useEffect } from "react";
+import { useFormState } from "react-dom";
+import { Button } from "shadcn/components/ui/button";
 import { toast } from "sonner";
+import { T_CRUDReturn } from "src/types/action";
+import { bookmarkFlashcardAction } from "./action";
 
 export default function BookmarkButton({
   bookmarked,
@@ -19,7 +19,7 @@ export default function BookmarkButton({
   const updateBookmark = bookmarkFlashcardAction.bind(null, {
     folderId,
     flashcardId,
-    bookmarked: true,
+    bookmarked
   });
 
   const [formState, onFormSubmit] = useFormState(updateBookmark, {

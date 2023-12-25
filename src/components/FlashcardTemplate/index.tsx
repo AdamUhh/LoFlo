@@ -3,12 +3,13 @@
 import DeleteFlashcardDialog from "components/FlashcardTemplate/DeleteFlashcard";
 import FlashcardDropdownOptions from "components/FlashcardTemplate/DropdownOptions";
 import EditFlashcardDialog from "components/FlashcardTemplate/EditFlashcard";
-import { FlipHorizontal, Volume2 } from "lucide-react";
+import { FlipHorizontal } from "lucide-react";
 import { MouseEvent, useState } from "react";
 import { Button } from "shadcn/components/ui/button";
 import { cn } from "shadcn/utils";
 import { T_FlashcardData } from "src/types/folder";
 import BookmarkButton from "./BookmarkButton";
+import SpeechButton from "./SpeechButton";
 
 export default function FlashcardTemplate({
   flashcard,
@@ -59,9 +60,7 @@ export default function FlashcardTemplate({
                 </Button>
               </div>
               <div className="flex gap-1">
-                <Button variant={"secondary"} className="h-fit p-1">
-                  <Volume2 size={20} />
-                </Button>
+                <SpeechButton text={showAnswer ? flashcard.answer : flashcard.question} />
                 <BookmarkButton
                   bookmarked={flashcard.bookmarked}
                   folderId={folderId}

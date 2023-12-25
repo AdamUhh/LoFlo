@@ -13,10 +13,18 @@ const createFlashcard = ({
   folderId,
   autoSpeakerMode,
 }: typeof flashcardsTable.$inferInsert) => {
-  return db
-    .insert(flashcardsTable)
-    .values({ question, answer, userId, folderId, autoSpeakerMode })
-    .returning({ flashcardId: flashcardsTable.id });
+  return db.transaction(async (tx) => {
+    const flashcardReturn = await tx
+      .insert(flashcardsTable)
+      .values({ question, answer, userId, folderId, autoSpeakerMode })
+      .returning({ flashcardId: flashcardsTable.id });
+
+    await tx
+      .insert(flashcardStatisticsTable)
+      .values({ flashcardId: flashcardReturn[0].flashcardId, userId });
+
+    return flashcardReturn;
+  });
 };
 
 const updateFlashcard = ({
@@ -50,11 +58,8 @@ const bookmarkFlashcard = ({
     .set({ bookmarked })
     .where(
       and(
-        and(
-          eq(flashcardsTable.id, flashcardId!),
-          eq(flashcardStatisticsTable.flashcardId, flashcardId!),
-        ),
-        eq(flashcardsTable.userId, userId),
+        eq(flashcardStatisticsTable.flashcardId, flashcardId!),
+        eq(flashcardStatisticsTable.userId, userId),
       ),
     );
 };

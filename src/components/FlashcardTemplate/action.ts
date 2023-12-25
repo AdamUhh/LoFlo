@@ -2,15 +2,15 @@
 
 import { auth } from "auth";
 import {
-  deleteFlashcard,
-  createFlashcard,
-  updateFlashcard,
   bookmarkFlashcard,
+  createFlashcard,
+  deleteFlashcard,
+  updateFlashcard,
 } from "db/queries/flashcards";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { T_CRUDReturn } from "src/types/action";
 import { MAX_TEXTAREA_CHAR } from "src/utils/constants";
+import { z } from "zod";
 
 const createSchema = z.object({
   flashcardQuestion: z
@@ -205,7 +205,7 @@ async function bookmarkFlashcardAction({
     await bookmarkFlashcard({
       flashcardId,
       userId: session.user.id,
-      bookmarked,
+      bookmarked: !bookmarked,
     });
 
     revalidatePath(!!folderId ? `/${folderId}` : "/my-folders");
@@ -223,8 +223,6 @@ async function bookmarkFlashcardAction({
 }
 
 export {
-  createFlashcardAction,
-  updateFlashcardAction,
-  deleteFlashcardAction,
-  bookmarkFlashcardAction,
+  bookmarkFlashcardAction, createFlashcardAction, deleteFlashcardAction, updateFlashcardAction
 };
+
