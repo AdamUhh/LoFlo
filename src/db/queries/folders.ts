@@ -141,7 +141,9 @@ const selectFolder = async (
 
   let whereCondition = sql`flashcard.folderId == FolderHierarchy.id AND flashcard.folderId == ${folderId}`;
 
-  // if (!!query?.length)
+  if (!!query?.length)
+    whereCondition = sql`${whereCondition} AND flashcard.question LIKE ${"%" + query + "%"} OR flashcard.answer LIKE ${"%" + query + "%"}`;
+
 
   if (!!filters?.length) {
     if (filters.includes("bookmarked"))
@@ -157,7 +159,7 @@ const selectFolder = async (
       : sql`DESC`
     : sql`ASC`;
   let sortCondition = sql`flashcard.question ${formattedOrder}`;
-
+  
   return db.all(sql`
   WITH RECURSIVE FolderHierarchy AS (
     -- Anchor member: Select root folder and its subfolders (matching parentId)
@@ -199,13 +201,20 @@ const selectFolder = async (
           'id', flashcard.id,
           'question', flashcard.question,
           'answer', flashcard.answer,
-          'bookmarked', flashcardStatistics.bookmarked
+          'bookmarked', flashcard.bookmarked
         )
-      ) AS flashcards
-      FROM flashcard
-      LEFT JOIN flashcardStatistics ON flashcard.id = flashcardStatistics.flashcardId
-      WHERE ${whereCondition}
-      ORDER BY ${sortCondition}
+      )
+      FROM (
+        SELECT
+          flashcard.id,
+          flashcard.question,
+          flashcard.answer,
+          flashcardStatistics.bookmarked
+        FROM flashcard
+        LEFT JOIN flashcardStatistics ON flashcard.id = flashcardStatistics.flashcardId
+        WHERE ${whereCondition}
+        ORDER BY ${sortCondition}
+      ) AS flashcard
     ) AS flashcardData
   FROM FolderHierarchy
   WHERE depth = 0

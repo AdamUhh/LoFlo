@@ -53,7 +53,7 @@ export default function FlashcardTemplate({
               <div className="flex gap-1">
                 <Button
                   variant={"secondary"}
-                  className={cn("h-fit p-1", showAnswer && "brightness-90")}
+                  className={cn("h-fit p-1 px-5", showAnswer && "brightness-90")}
                   onClick={handleCardFlip}
                 >
                   <FlipHorizontal size={20} />

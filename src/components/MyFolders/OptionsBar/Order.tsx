@@ -22,8 +22,9 @@ export default function Order() {
 
     const params = new URLSearchParams(searchParams);
 
-    params.set("order", returnVal);
-
+    if (returnVal === "ASC") params.delete("order")
+    else params.set("order", returnVal);
+  
     replace(`${pathname}?${params.toString()}`);
 
     setOrderValue(returnVal);

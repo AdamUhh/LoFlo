@@ -3,6 +3,7 @@ import { Button } from "shadcn/components/ui/button";
 import AddFlashcardButton from "../../FlashcardTemplate/AddFlashcard";
 import Filters from "./Filters";
 import Order from "./Order";
+import Search from "./Search";
 
 export default function OptionsBar({ flashcardCount }: { flashcardCount: string | number }) {
   return (
@@ -18,9 +19,12 @@ export default function OptionsBar({ flashcardCount }: { flashcardCount: string 
           </Button>
         </div>
       </div>
-      <div className="flex w-fit flex-col">
-        <div className="text-left text-sm opacity-50">No. of flashcards: {flashcardCount}</div>
-        <div className="w-fit flex gap-1">
+      <div className="text-left text-sm opacity-50">No. of flashcards: {flashcardCount}</div>
+      <div className="flex w-full">
+        <div className="max-w-[40%]">
+          <Search />
+        </div>
+        <div className="flex gap-1 ml-auto">
           <Filters />
           <Order />
         </div>

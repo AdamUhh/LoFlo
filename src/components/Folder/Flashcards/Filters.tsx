@@ -3,7 +3,7 @@
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Button } from "shadcn/components/ui/button";
 import {
   DropdownMenu,
@@ -66,30 +66,42 @@ export default function Filter() {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex gap-1">
-          <ChevronDown size={15} />
-          <span>Filters</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuCheckboxItem checked={filters.all} onCheckedChange={handleAllChange}>
-          All
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuSeparator />
-        {Object.keys(filters)
-          .filter((key) => key !== "all")
-          .map((key) => (
-            <DropdownMenuCheckboxItem
-              key={key}
-              checked={filters[key as keyof typeof filters]}
-              onCheckedChange={() => handleChange(key as keyof typeof filters)}
-            >
-              {key.charAt(0).toUpperCase() + key.slice(1)}
+    <>
+      <div className="flex w-fit gap-1">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="flex gap-1">
+              <ChevronDown size={15} />
+              <span>
+                {!filters["all"]
+                  ? Object.entries(filters)
+                      .map(([k, v]) => v && k)
+                      .filter(Boolean)
+                      .map((v) => <span className="text-left text-sm opacity-50">{v}{" "}</span>)
+                  : "Filters"}
+              </span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuCheckboxItem checked={filters.all} onCheckedChange={handleAllChange}>
+              All
             </DropdownMenuCheckboxItem>
-          ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+            <DropdownMenuSeparator />
+            {Object.keys(filters)
+              .filter((key) => key !== "all")
+              .map((key) => (
+                <DropdownMenuCheckboxItem
+                  key={key}
+                  checked={filters[key as keyof typeof filters]}
+                  onCheckedChange={() => handleChange(key as keyof typeof filters)}
+                >
+                  {key.charAt(0).toUpperCase() + key.slice(1)}
+                </DropdownMenuCheckboxItem>
+              ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="flex gap-1"></div>
+    </>
   );
 }
