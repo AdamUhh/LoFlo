@@ -1,10 +1,14 @@
 "use server";
 
+import { auth } from "auth";
 import { db } from "db/index";
 
 import { flashcard as flashcardsTable } from "db/schema/flashcards";
 import { flashcardStatistics as flashcardStatisticsTable } from "db/schema/flashcardStatistics";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
+import { redirect } from "next/navigation";
+import { SQLiteRaw } from "drizzle-orm/sqlite-core/query-builders/raw";
+import { T_PracticeFlashcardData } from "src/types/flashcard";
 
 const createFlashcard = ({
   question,
@@ -64,4 +68,33 @@ const bookmarkFlashcard = ({
     );
 };
 
-export { bookmarkFlashcard, createFlashcard, deleteFlashcard, updateFlashcard };
+const selectPracticeFlashcards = async (
+  folderId: string,
+  mode: string,
+): Promise<SQLiteRaw<T_PracticeFlashcardData[]>> => {
+  const session = await auth();
+  if (!session?.user) redirect("/signin");
+
+  if (mode === "all") {
+  }
+  return db.all(sql`
+    SELECT
+      flashcard.id,
+      flashcard.question,
+      flashcard.answer,
+      flashcard.autoSpeakerMode,
+      flashcardStatistics.bookmarked as bookmarked
+    FROM
+    flashcard
+    LEFT JOIN flashcardStatistics ON flashcard.id = flashcardStatistics.flashcardId
+    WHERE flashcard.folderId = ${folderId} AND flashcard.userId = ${session.user.id};
+    `);
+};
+
+export {
+  bookmarkFlashcard,
+  createFlashcard,
+  deleteFlashcard,
+  updateFlashcard,
+  selectPracticeFlashcards,
+};

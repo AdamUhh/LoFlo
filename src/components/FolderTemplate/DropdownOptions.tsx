@@ -20,7 +20,7 @@ export default function DropdownOptions({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant={"ghost"} className="p-0">
-          <MoreVertical />
+          <MoreVertical size={20} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

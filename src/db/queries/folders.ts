@@ -7,6 +7,10 @@ import { folder as foldersTable } from "db/schema/folders";
 import { and, eq, sql } from "drizzle-orm";
 import { SQLiteRaw } from "drizzle-orm/sqlite-core/query-builders/raw";
 import { redirect } from "next/navigation";
+import { T_Folder } from "src/types/folder";
+
+// ? Note: Selects have auth() integrated, while other CRUD functions do not,
+// ? since their actions pass the auth() result
 
 export const selectFolders = async (
   query?: string,
@@ -14,7 +18,6 @@ export const selectFolders = async (
   order?: string,
 ): Promise<SQLiteRaw<{ id: string; name: string; subfolderCount: string }[]>> => {
   const session = await auth();
-
   if (!session?.user) redirect("/signin");
 
   let whereCondition = sql`parentId IS NULL AND folder.userId = ${session.user.id}`;
@@ -118,32 +121,16 @@ const selectFolder = async (
   query?: string,
   filters?: string[],
   order?: string,
-): Promise<
-  SQLiteRaw<
-    {
-      id: string;
-      name: string;
-      description: string;
-      parentId: string | null;
-      subfolderCount: number;
-      flashcardCount: number;
-      flashcardData: {
-        id: string;
-        question: string;
-        answer: string;
-        bookmarked: boolean;
-      };
-    }[]
-  >
-> => {
+): Promise<SQLiteRaw<T_Folder[]>> => {
   const session = await auth();
   if (!session?.user) redirect("/signin");
 
   let whereCondition = sql`flashcard.folderId == FolderHierarchy.id AND flashcard.folderId == ${folderId}`;
 
   if (!!query?.length)
-    whereCondition = sql`${whereCondition} AND flashcard.question LIKE ${"%" + query + "%"} OR flashcard.answer LIKE ${"%" + query + "%"}`;
-
+    whereCondition = sql`${whereCondition} AND flashcard.question LIKE ${
+      "%" + query + "%"
+    } OR flashcard.answer LIKE ${"%" + query + "%"}`;
 
   if (!!filters?.length) {
     if (filters.includes("bookmarked"))
@@ -159,7 +146,7 @@ const selectFolder = async (
       : sql`DESC`
     : sql`ASC`;
   let sortCondition = sql`flashcard.question ${formattedOrder}`;
-  
+
   return db.all(sql`
   WITH RECURSIVE FolderHierarchy AS (
     -- Anchor member: Select root folder and its subfolders (matching parentId)

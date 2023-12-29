@@ -5,9 +5,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import Container from "src/components/Container";
-import { T_Folder } from "src/types/folder";
 
-export const getFolder = cache(
+const getFolder = cache(
   async (folderId: string, query?: string, filter?: string, order?: string) => {
     return selectFolder(folderId, query, filter?.split(","), order);
   },
@@ -24,7 +23,7 @@ export async function generateMetadata({
   const filter = searchParams?.filter || "";
   const order = searchParams?.order || "";
 
-  const folders: T_Folder[] = await getFolder(folderId, query, filter, order);
+  const folders = await getFolder(folderId, query, filter, order);
 
   const rootFolder = folders.filter((f) => f.id === folderId);
 
@@ -48,7 +47,7 @@ export default async function FolderPage({
   const filter = searchParams?.filter || "";
   const order = searchParams?.order || "";
 
-  const folders: T_Folder[] = await getFolder(_folderId, query, filter, order);
+  const folders = await getFolder(_folderId, query, filter, order);
 
   const currentFolder = folders.filter((f) => f.id === _folderId);
 

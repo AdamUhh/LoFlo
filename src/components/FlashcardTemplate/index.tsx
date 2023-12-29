@@ -43,6 +43,7 @@ export default function FlashcardTemplate({
             <FlashcardDropdownOptions
               setEditDialog={setIsEditDialogOpen}
               setDeleteDialog={setIsDeleteDialogOpen}
+              showQueue
             />
           </div>
           <div className="flex h-full w-full flex-col justify-between">
@@ -81,7 +82,7 @@ export default function FlashcardTemplate({
         setIsOpen={setIsEditDialogOpen}
         question={flashcard.question}
         answer={flashcard.answer}
-        id={flashcard.id}
+        flashcardId={flashcard.id}
       />
     </>
   );

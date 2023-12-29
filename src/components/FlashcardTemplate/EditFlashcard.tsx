@@ -1,4 +1,3 @@
-"use client";
 import { Volume2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -22,13 +21,13 @@ export default function EditFlashcardDialog({
   setIsOpen,
   question,
   answer,
-  id,
+  flashcardId,
 }: {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   question: string;
   answer: string;
-  id: string;
+  flashcardId: string;
 }) {
   const params = useParams();
 
@@ -41,7 +40,7 @@ export default function EditFlashcardDialog({
             flashcardFolderParentId={!!params.folder ? (params.folder as string) : undefined}
             question={question}
             answer={answer}
-            id={id}
+            id={flashcardId}
           />
         </div>
       </FlashcardDialogContentLayout>

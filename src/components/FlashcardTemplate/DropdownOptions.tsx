@@ -12,14 +12,16 @@ import {
 export default function FlashcardDropdownOptions({
   setEditDialog,
   setDeleteDialog,
+  showQueue = false,
 }: {
   setEditDialog: Dispatch<SetStateAction<boolean>>;
   setDeleteDialog: Dispatch<SetStateAction<boolean>>;
+  showQueue?: boolean;
 }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={"secondary"} className="bg-transparent p-0 hover:bg-secondary">
+        <Button variant={"secondary"} className="h-fit bg-transparent p-1 hover:bg-secondary">
           <MoreVertical size={20} />
         </Button>
       </DropdownMenuTrigger>
@@ -32,11 +34,15 @@ export default function FlashcardDropdownOptions({
           <Trash2 size={15} />
           <span className="pl-2">Delete</span>
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Plus size={15} />
-          <span className="pl-2"> Add flashcard to queue</span>
-        </DropdownMenuItem>
+        {showQueue && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Plus size={15} />
+              <span className="pl-2"> Add flashcard to queue</span>
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

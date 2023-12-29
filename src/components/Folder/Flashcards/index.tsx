@@ -1,6 +1,6 @@
+import { T_FlashcardData } from "src/types/folder";
 import FlashcardTemplate from "../../FlashcardTemplate";
 import OptionsBar from "./OptionsBar";
-import { T_FlashcardData, T_Folder } from "src/types/folder";
 
 export default function Flashcards({
   flashcardData,

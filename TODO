@@ -31,18 +31,20 @@ Basic Outline:
     ✔ Ability to navigate to the Flashcard Start page for that folder. @done(23-12-21 15:53)
     ☐ Ability to queue folders and flashcards to go into study mode
     ✔ Options to @done(23-12-23 14:27)
-      ☐ search
+      ✔ search @done(23-12-26 10:59)
       ✔ edit, @done(23-12-23 14:27)
       ✔ delete, @done(23-12-23 14:27)
-      ☐ sort flashcards
+      ✔ sort flashcards @done(23-12-26 10:59)
     
     Study Mode:
-    ☐ Provide a focused environment for studying flashcards.
-    ☐ Display flashcards one at a time with controls to move between them.
-    ☐ Show progress indicators such as the current card number and total cards.
-    ☐ Include options to reveal the answer, mark a card as known, or flag it for review.
-    ☐ Options to edit the current flashcard, or delete the flashcard.
-    ☐ Display statistics on the user's performance after completing a study session.
+    ✔ Provide a focused environment for studying flashcards. @done(23-12-30 01:51)
+    ✔ Display flashcards one at a time with controls to move between them. @done(23-12-29 20:05)
+    ✔ Show progress indicators such as the current card number and total cards. @done(23-12-29 20:30)
+    ✔ Include options to reveal the answer, mark a card as known, or flag it for review. @done(23-12-29 20:05)
+    ✔ Options to edit the current flashcard, or delete the flashcard. @done(23-12-30 01:42)
+    ☐ Add client-side filters
+    ☐ When user finishes practicing, only then it will push the stats
+    ☐ Display modal with statistics on the user's performance after completing a study session.
 
 Todo for pages:
   My Folders:

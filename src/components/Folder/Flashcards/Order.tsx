@@ -1,4 +1,5 @@
 "use client";
+
 import { ArrowDownNarrowWide, ArrowUpNarrowWide } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
