@@ -36,11 +36,11 @@ export default async function HomePage() {
                 {session?.user ? (
                   <Link href={"/my-folders"} className="flex gap-2">
                     <span>Go to app</span>
-                    <ArrowRight />
+                    <ArrowRight size={20} />
                   </Link>
                 ) : (
-                  <Link href={"/signin"} className="flex gap-2">
-                    <span>Get Started</span> <ArrowRight />
+                  <Link href={"/signin"} className="flex items-center gap-2">
+                    <span>Get Started</span> <ArrowRight size={20} />
                   </Link>
                 )}
               </button>
