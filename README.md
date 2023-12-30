@@ -98,3 +98,8 @@ turso db tokens create DBNAME -e none
 ```cli
 vercel --prod
 ```
+
+### IMPORTANT
+
+- Make sure that you push your schema to the product turso db
+- In other words, run `pnpm db:push` in your CLI with your turso env instead of dev env
