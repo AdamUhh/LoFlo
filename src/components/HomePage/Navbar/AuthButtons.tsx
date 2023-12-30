@@ -8,17 +8,11 @@ export function AuthSignOut() {
     <div className="flex gap-1">
       <button
         type="button"
-        className="hover:bg-accent/90 hover:text-background text-background bg-foreground  rounded px-2 py-1 font-medium transition"
+        className="rounded bg-foreground px-2 py-1  font-medium text-background transition hover:bg-accent/90 hover:text-background"
         onClick={() => signOut()}
       >
         Sign Out
       </button>
-      <Link
-        href={"/my-folders"}
-        className="bg-accent hover:text-background text-background hover:bg-accent/90 rounded px-2 py-1 font-medium transition"
-      >
-        Go To App
-      </Link>
     </div>
   );
 }
@@ -27,7 +21,7 @@ export function AuthSignIn() {
   return (
     <Link
       href={"/signin"}
-      className="hover:bg-accent/90 hover:text-background text-background bg-foreground  rounded px-2 py-1 font-medium transition"
+      className="rounded bg-foreground px-2 py-1  font-medium text-background transition hover:bg-accent/90 hover:text-background"
     >
       Sign In
     </Link>
