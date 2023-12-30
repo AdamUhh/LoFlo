@@ -18,7 +18,6 @@ const createSchema = z.object({
     .trim()
     .max(100, { message: "Folder description too long! Max Characters: 100" })
     .optional(),
-  speakerMode: z.union([z.literal("on"), z.literal(null)]),
   folderParentId: z.string().nullable(),
 });
 
@@ -41,7 +40,6 @@ async function createFolderAction(_: any, formData: FormData): Promise<T_CRUDRet
   const parse = createSchema.safeParse({
     folderName: formData.get("folderName"),
     folderDescription: formData.get("folderDescription"),
-    speakerMode: formData.get("speakerMode"),
     folderParentId: formData.get("folderParentId"),
   });
 
@@ -60,7 +58,6 @@ async function createFolderAction(_: any, formData: FormData): Promise<T_CRUDRet
       name: data.folderName,
       description: data.folderDescription,
       userId: session.user.id,
-      autoSpeakerMode: data.speakerMode !== null,
       parentId: data.folderParentId,
     });
 
@@ -87,13 +84,11 @@ async function updateFolderAction(_: any, formData: FormData): Promise<T_CRUDRet
       status: "error",
       returnMessage: "No user found",
     };
-
   const parse = updateSchema.safeParse({
     folderId: formData.get("folderId"),
     folderName: formData.get("folderName"),
     folderDescription: formData.get("folderDescription"),
-    speakerMode: formData.get("speakerMode"),
-    folderParentId: formData.get("folderParentId"),
+    folderParentId: null,
   });
 
   if (!parse.success) {
@@ -104,15 +99,13 @@ async function updateFolderAction(_: any, formData: FormData): Promise<T_CRUDRet
   }
 
   const data = parse.data;
-  const FolderType = !!data.folderParentId ? "subfolder" : "folder";
 
   try {
     const updatedFolderRes = await updateFolder({
       name: data.folderName,
       description: data.folderDescription,
       userId: session.user.id,
-      autoSpeakerMode: data.speakerMode !== null,
-      parentId: data.folderParentId,
+      id: data.folderId,
     });
 
     revalidatePath(!!data.folderParentId ? `/${data.folderParentId}` : "/my-folders");
@@ -124,7 +117,7 @@ async function updateFolderAction(_: any, formData: FormData): Promise<T_CRUDRet
   } catch (e) {
     return {
       status: "error",
-      returnMessage: `Failed to create ${FolderType}`,
+      returnMessage: `Failed to update folder`,
     };
   }
 }
@@ -174,7 +167,6 @@ async function deleteFolderAction(_: any, formData: FormData): Promise<T_CRUDRet
 
   // ? issue where redirecting from clientside is not revalidating
   // ? decided to not add toast
-  // ? TODO: figure this out later?
   redirect(!!data.folderParentId ? `/${data.folderParentId}` : "/my-folders");
 }
 

@@ -1,11 +1,9 @@
 "use client";
-import { Volume2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { Button } from "shadcn/components/ui/button";
-import { Checkbox } from "shadcn/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -15,11 +13,10 @@ import {
   DialogTrigger,
 } from "shadcn/components/ui/dialog";
 import { Input } from "shadcn/components/ui/input";
-import { Label } from "shadcn/components/ui/label";
 import { useToast } from "shadcn/components/ui/use-toast";
-import SubmitButton from "./SubmitButton";
-import {createFolderAction} from "./action";
 import { T_CRUDReturn } from "src/types/action";
+import SubmitButton from "./SubmitButton";
+import { createFolderAction } from "./action";
 
 export default function AddFolderButton() {
   const params = useParams();
@@ -112,22 +109,7 @@ function DialogContents({
           />
         )}
       </div>
-      <div className="items-top flex space-x-2">
-        <Checkbox id="speakerMode" name="speakerMode" />
-        <div className="grid gap-1.5 leading-none">
-          <Label
-            htmlFor="speakerMode"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            <div className=" -mt-1 flex items-center gap-1">
-              <Volume2/>Auto Read Text
-            </div>
-            <p className="mt-1 text-sm font-normal text-muted-foreground">
-              All flashcards will automatically read text aloud. <br /> Useful for language flashcards.
-            </p>
-          </Label>
-        </div>
-      </div>
+    
       {formState.status === "error" && (
         <div className="mt-2 flex items-center gap-1">
           <p className="text-red-500">

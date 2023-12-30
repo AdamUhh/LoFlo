@@ -88,32 +88,42 @@ const createFolder = ({
   description,
   userId,
   parentId,
-  autoSpeakerMode,
 }: typeof foldersTable.$inferInsert) => {
   return db
     .insert(foldersTable)
-    .values({ name, description, userId, parentId, autoSpeakerMode })
+    .values({ name, description, userId, parentId })
     .returning({ folderId: foldersTable.id });
 };
 
-const updateFolder = ({
-  id,
-  name,
-  description,
-  userId,
-  autoSpeakerMode,
-}: typeof foldersTable.$inferInsert) => {
+const updateFolder = ({ id, name, description, userId }: typeof foldersTable.$inferInsert) => {
   return db
     .update(foldersTable)
-    .set({ name, description, autoSpeakerMode })
+    .set({ name, description })
     .where(and(eq(foldersTable.id, id!), eq(foldersTable.userId, userId)))
     .returning({ name: foldersTable.name });
 };
 
 const deleteFolder = ({ id, userId }: typeof foldersTable.$inferInsert) => {
-  return db
-    .delete(foldersTable)
-    .where(and(eq(foldersTable.id, id!), eq(foldersTable.userId, userId)));
+  // return db
+  //   .delete(foldersTable)
+  //   .where(and(eq(foldersTable.id, id!), eq(foldersTable.userId, userId)));
+  return db.all(sql`
+  -- Create a recursive CTE to get all subfolder IDs
+  WITH RECURSIVE SubfolderHierarchy AS (
+    SELECT id
+    FROM folder
+    WHERE id = ${id} AND userId = ${userId}
+    UNION
+    SELECT f.id
+    FROM folder f
+    JOIN SubfolderHierarchy sfh ON f.parentId = sfh.id
+  )
+  
+  -- Delete the subfolders and the root folder
+  DELETE FROM folder
+  WHERE id IN (SELECT id FROM SubfolderHierarchy);
+  
+  `)
 };
 
 const selectFolder = async (

@@ -14,7 +14,7 @@ export function AuthSignOut() {
         Sign Out
       </button>
       <Link
-        href={"/dashboard"}
+        href={"/my-folders"}
         className="bg-accent hover:text-background text-background hover:bg-accent/90 rounded px-2 py-1 font-medium transition"
       >
         Go To App

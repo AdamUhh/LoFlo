@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { JetBrains_Mono, Poppins } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "shadcn/components/ui/toaster";
-import { QueueProvider } from "src/context";
 import "../globals.css";
 
 const jetBrains = JetBrains_Mono({
@@ -62,9 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${jetBrains.variable} ${poppins.variable} overflow-hidden font-poppins`}
       >
         <NextTopLoader showSpinner={false} />
-        <QueueProvider>
-          <div className="grid grid-rows-[50px_auto]">{children}</div>
-        </QueueProvider>
+        <div className="grid grid-rows-[50px_auto]">{children}</div>
         <Toaster />
       </body>
     </html>

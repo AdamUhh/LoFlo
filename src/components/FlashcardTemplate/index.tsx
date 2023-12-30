@@ -3,9 +3,17 @@
 import DeleteFlashcardDialog from "components/FlashcardTemplate/DeleteFlashcard";
 import FlashcardDropdownOptions from "components/FlashcardTemplate/DropdownOptions";
 import EditFlashcardDialog from "components/FlashcardTemplate/EditFlashcard";
-import { FlipHorizontal } from "lucide-react";
+import { Expand, FlipHorizontal } from "lucide-react";
 import { MouseEvent, useState } from "react";
 import { Button } from "shadcn/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "shadcn/components/ui/dialog";
 import { cn } from "shadcn/utils";
 import { T_FlashcardData } from "src/types/folder";
 import BookmarkButton from "./BookmarkButton";
@@ -21,6 +29,7 @@ export default function FlashcardTemplate({
   const [showAnswer, setShowAnswer] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [expandDialogOpen, setExpandDialogOpen] = useState(false);
 
   function handleCardFlip(e: MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
@@ -43,7 +52,6 @@ export default function FlashcardTemplate({
             <FlashcardDropdownOptions
               setEditDialog={setIsEditDialogOpen}
               setDeleteDialog={setIsDeleteDialogOpen}
-              showQueue
             />
           </div>
           <div className="flex h-full w-full flex-col justify-between">
@@ -61,6 +69,13 @@ export default function FlashcardTemplate({
                 </Button>
               </div>
               <div className="flex gap-1">
+                <Button
+                  variant={"secondary"}
+                  className={cn("h-fit p-1", showAnswer && "brightness-90")}
+                  onClick={() => setExpandDialogOpen(true)}
+                >
+                  <Expand size={20} />
+                </Button>
                 <SpeechButton text={showAnswer ? flashcard.answer : flashcard.question} />
                 <BookmarkButton
                   bookmarked={flashcard.bookmarked}
@@ -84,6 +99,31 @@ export default function FlashcardTemplate({
         answer={flashcard.answer}
         flashcardId={flashcard.id}
       />
+      <Dialog open={expandDialogOpen} onOpenChange={setExpandDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{showAnswer ? "Answer" : "Question"}</DialogTitle>
+            <DialogDescription className="whitespace-pre-wrap overflow-auto max-h-[60vh]">
+              {showAnswer ? flashcard.answer : flashcard.question}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant={"secondary"}
+              className={cn("h-fit mr-auto p-1 px-5 gap-2", showAnswer && "brightness-90")}
+              onClick={handleCardFlip}
+            >
+              <FlipHorizontal size={20} /> Flip
+            </Button>
+              <SpeechButton text={showAnswer ? flashcard.answer : flashcard.question} />
+              <BookmarkButton
+                bookmarked={flashcard.bookmarked}
+                folderId={folderId}
+                flashcardId={flashcard.id}
+              />
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

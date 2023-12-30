@@ -17,9 +17,21 @@ const TextareaWithCount = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const [count, setCount] = React.useState(0);
 
     const recalculateCount = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setCount(e.target.value.length);
+      const inputValue = e.target.value;
+      // Trim trailing \r characters
+      const trimmedValue = inputValue.replaceAll(/\r+$/g, "");
+      // Counting \r and \n as one character each
+      const lineBreaksCount = (trimmedValue.match(/\r?\n/g) || []).length;
+      setCount(trimmedValue.length + lineBreaksCount);
+
       if (userOnChangeCallback) userOnChangeCallback(e);
     };
+
+    // Add an effect to initialize the count
+    React.useEffect(() => {
+      // Set initial count when component mounts
+      setCount(props.value ? props.value.toString().length : 0);
+    }, []);
 
     return (
       <div className="relative w-full">

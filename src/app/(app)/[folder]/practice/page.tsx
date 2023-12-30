@@ -14,13 +14,15 @@ export default async function StudyModePage({
   params: { folder: string };
   searchParams?: { mode?: string; query?: string; filter?: string; order?: string; page?: string };
 }) {
+
+  const filters = searchParams?.filter || "";
   const mode = searchParams?.mode || "current";
 
   const flashcardsData = await selectPracticeFlashcards(_folderId, mode);
 
   return (
     <Container title={"Practice"}>
-      <Practice flashcardData={flashcardsData} folderId={_folderId}  />
+      <Practice flashcardData={flashcardsData} folderId={_folderId} filters={filters.split(',')}  />
     </Container>
   );
 }

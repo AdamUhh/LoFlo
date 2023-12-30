@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createUUID } from "src/utils/uuid";
 import { users } from "./auth";
 import { folder } from "./folders";
@@ -17,7 +17,6 @@ export const flashcard = sqliteTable("flashcard", {
   folderId: text("folderId")
     .notNull()
     .references(() => folder.id, { onDelete: "cascade" }),
-  autoSpeakerMode: integer("autoSpeakerMode", { mode: "boolean" }).default(false),
   createdAt: text("createdAt").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updatedAt").default(sql`CURRENT_TIMESTAMP`),
 });

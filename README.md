@@ -12,6 +12,10 @@ pnpm i
 pnpm dev
 ```
 
+## NextAuth
+
+- For github credentials, remember that it should be an OAuth App, not the Github App
+
 ## How to start Turso db
 
 - Requirements to run: [Turso CLI](https://docs.turso.tech/reference/turso-cli)
@@ -41,7 +45,7 @@ pnpm dev
 
 Also, if you accidentally typed `exit` on the WSL terminal, and it lost color, packages, and functionality, type `source ~/.bashrc`
 
-### Run Locally
+### Run db locally
 
 ``` cli
 turso dev --db-file dev.db
@@ -57,4 +61,40 @@ pnpm db:push
 
 ``` cli
 pnpm studio
+```
+
+## Production
+
+- First, login - you may need to add `--headless` at the end
+- if you do need `--headless`, just sign in and paste the secret export to your cli
+
+```cli
+turso auth login
+```
+
+- Then, create your database name
+
+```cli
+turso db create DBNAME
+```
+
+- Then, show your newly create db's info
+- It will show a URL, put that in your `.env.local` as your `DATABASE_URL`
+
+```cli
+turso db show DBNAME
+```
+
+- Then, create a secret token for your db
+- Use that as your `DATABASE_AUTH_TOKEN`
+- `-e none` is to not expire
+
+```cli
+turso db tokens create DBNAME -e none
+```
+
+- Upload app to vercel with these environment variables, and you're done :P
+
+```cli
+vercel --prod
 ```

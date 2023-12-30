@@ -8,11 +8,7 @@ What will it do:
 
 
 Basic Outline:
-  Dashboard:
-    ☐ Overview of the user's activity and progress.
-    ☐ Quick access to recently studied flashcards or folders.
-    ☐ Option to create a new folder or flashcards, after creation, will redirect to that folder
-    ☐ Navigation to other sections of the app.
+
     
   My Folders:
     ✔ Display a list of all folders created by the user. @done(23-12-15 11:47)
@@ -29,12 +25,13 @@ Basic Outline:
     ✔ Detailed view of a specific folder and its contents. @done(23-12-21 15:53)
     ✔ List of flashcards within the selected folder. @done(23-12-21 15:53)
     ✔ Ability to navigate to the Flashcard Start page for that folder. @done(23-12-21 15:53)
-    ☐ Ability to queue folders and flashcards to go into study mode
+    ✘ Ability to queue folders and flashcards to go into study mode @cancelled(23-12-30 13:17)
     ✔ Options to @done(23-12-23 14:27)
       ✔ search @done(23-12-26 10:59)
       ✔ edit, @done(23-12-23 14:27)
       ✔ delete, @done(23-12-23 14:27)
       ✔ sort flashcards @done(23-12-26 10:59)
+    ✘ UseOptimistic @cancelled(23-12-31 00:46)
     
     Study Mode:
     ✔ Provide a focused environment for studying flashcards. @done(23-12-30 01:51)
@@ -42,9 +39,12 @@ Basic Outline:
     ✔ Show progress indicators such as the current card number and total cards. @done(23-12-29 20:30)
     ✔ Include options to reveal the answer, mark a card as known, or flag it for review. @done(23-12-29 20:05)
     ✔ Options to edit the current flashcard, or delete the flashcard. @done(23-12-30 01:42)
-    ☐ Add client-side filters
-    ☐ When user finishes practicing, only then it will push the stats
-    ☐ Display modal with statistics on the user's performance after completing a study session.
+    ✔ Add client-side filters @done(23-12-30 21:05)
+    ✔ When user finishes practicing, only then it will push the stats @done(23-12-30 21:05)
+    ✔ Display modal with statistics on the user's performance after completing a study session. @done(23-12-30 21:05)
+    ✘ UseOptimistic @cancelled(23-12-31 00:46)
+
+
 
 Todo for pages:
   My Folders:

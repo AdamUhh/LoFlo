@@ -1,49 +1,47 @@
-"use client";
-import { Volume2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
-import { Checkbox } from "shadcn/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from "shadcn/components/ui/dialog";
 import { Input } from "shadcn/components/ui/input";
-import { Label } from "shadcn/components/ui/label";
 import { useToast } from "shadcn/components/ui/use-toast";
+import { T_CRUDReturn } from "src/types/action";
 import SubmitButton from "./SubmitButton";
 import { updateFolderAction } from "./action";
-import { T_CRUDReturn } from "src/types/action";
 
 export default function EditFolderDialog({
   isOpen,
   setIsOpen,
   name,
   description,
+  isSubfolder,
 }: {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   name: string;
   description: string;
+  isSubfolder: boolean;
 }) {
   const params = useParams();
-  const [subfolder] = useState<boolean>(!!params.folder);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="max-w-sm md:max-w-md">
         <DialogHeader>
-          <DialogTitle>Edit {subfolder ? "Subfolder" : "Folder"}</DialogTitle>
+          <DialogTitle>Edit {isSubfolder ? "Subfolder" : "Folder"}</DialogTitle>
         </DialogHeader>
         <div className="flex items-center space-x-2">
           <DialogContents
             setOpen={setIsOpen}
-            parentId={subfolder ? (params.folder as string) : undefined}
+            parentId={params.folder as string}
             name={name}
-            description={description}
+            description={description || ""}
+            isSubfolder={isSubfolder}
           />
         </div>
       </DialogContent>
@@ -56,11 +54,13 @@ function DialogContents({
   parentId,
   name: _name,
   description: _description,
+  isSubfolder,
 }: {
   setOpen: (_bool: boolean) => void;
-  parentId?: string;
+  parentId: string;
   name: string;
   description: string;
+  isSubfolder: boolean;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
@@ -69,7 +69,8 @@ function DialogContents({
     returnMessage: "",
     redirectPayload: "",
   } as T_CRUDReturn);
-  const FolderType = !!parentId?.length ? "Subfolder" : "Folder";
+
+  const FolderType = isSubfolder ? "Subfolder" : "Folder";
 
   const [name, setName] = useState(_name);
   const [description, setDescription] = useState(_description);
@@ -106,9 +107,10 @@ function DialogContents({
           type="text"
           placeholder="Short Description (optional)"
         />
+        
         {!!parentId?.length && (
           <Input
-            name={"folderParentId"}
+            name={"folderId"}
             value={parentId}
             onChange={() => {}}
             type="text"
@@ -117,24 +119,7 @@ function DialogContents({
           />
         )}
       </div>
-      <div className="items-top flex space-x-2">
-        <Checkbox id="speakerMode" name="speakerMode" />
-        <div className="grid gap-1.5 leading-none">
-          <Label
-            htmlFor="speakerMode"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            <div className=" -mt-1 flex items-center gap-1">
-              <Volume2 />
-              Auto Read Text
-            </div>
-            <p className="mt-1 text-sm font-normal text-muted-foreground">
-              All flashcards will automatically read text aloud. <br /> Useful for language
-              flashcards.
-            </p>
-          </Label>
-        </div>
-      </div>
+
       {formState.status === "error" && (
         <div className="mt-2 flex items-center gap-1">
           <p className="text-red-500">
@@ -143,7 +128,7 @@ function DialogContents({
         </div>
       )}
       <DialogFooter>
-        <SubmitButton />
+        <SubmitButton mode="update" />
       </DialogFooter>
     </form>
   );

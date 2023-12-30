@@ -32,11 +32,6 @@ export default function DropdownOptions({
           <Trash2 size={15} />
           <span className="pl-2">Delete</span>
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Plus size={15} />
-          <span className="pl-2"> Add folder to queue</span>
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

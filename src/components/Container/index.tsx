@@ -6,7 +6,7 @@ type ContainerProps = {
   children: ReactNode;
 };
 
-export default function Container({ title = "Dashboard", children }: ContainerProps) {
+export default function Container({ title = "My Folders", children }: ContainerProps) {
   return (
     <>
       <Navbar title={title} />

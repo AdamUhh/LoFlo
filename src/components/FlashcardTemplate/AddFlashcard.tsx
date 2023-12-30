@@ -1,21 +1,19 @@
 "use client";
-import { Volume2 } from "lucide-react";
+
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { TextareaWithCount } from "shadcn/components/custom/textareacount";
 import { Button } from "shadcn/components/ui/button";
-import { Checkbox } from "shadcn/components/ui/checkbox";
 import { Dialog, DialogFooter, DialogTrigger } from "shadcn/components/ui/dialog";
 import { Input } from "shadcn/components/ui/input";
-import { Label } from "shadcn/components/ui/label";
 import { useToast } from "shadcn/components/ui/use-toast";
 import { T_CRUDReturn } from "src/types/action";
+import { MAX_TEXTAREA_CHAR } from "src/utils/constants";
 import { FlashcardDialogContentLayout } from "./DialogLayout";
 import SubmitButton from "./SubmitButton";
 import { createFlashcardAction } from "./action";
-import { MAX_TEXTAREA_CHAR } from "src/utils/constants";
 
 export default function AddFlashcardButton() {
   const params = useParams();
@@ -79,7 +77,7 @@ function DialogContents({
 
   return (
     <form action={onFormSubmit} className="flex h-full w-full flex-col">
-      <div className="flex h-full flex-col gap-1 md:flex-row">
+      <div className="mb-4 flex h-full flex-col gap-1 md:flex-row">
         <TextareaWithCount
           maxCount={MAX_TEXTAREA_CHAR}
           placeholder="Question"
@@ -105,23 +103,7 @@ function DialogContents({
           />
         )}
       </div>
-      <div className="items-top mt-4 flex gap-2">
-        <Checkbox id="speakerMode" name="speakerMode" />
-        <div className="grid gap-1.5 leading-none">
-          <Label
-            htmlFor="speakerMode"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            <div className=" -mt-1 flex items-center gap-1">
-              <Volume2 />
-              Auto Read Text
-            </div>
-            <p className="mt-1 text-sm font-normal text-muted-foreground">
-              Flashcard will automatically read text aloud. <br /> Useful for language flashcards.
-            </p>
-          </Label>
-        </div>
-      </div>
+
       {formState.status === "error" && (
         <div className="mt-2 flex items-center gap-1">
           <p className="text-red-500">{formState.returnMessage || "Failed to create flashcard"}</p>

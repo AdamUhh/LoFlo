@@ -5,7 +5,7 @@ import { signIn } from "src/auth";
 export default function SignInPage() {
   async function handleSubmit(providerName: string, _: FormData) {
     "use server";
-    await signIn(providerName, { redirectTo: "/dashboard" });
+    await signIn(providerName, { redirectTo: "/my-folders" });
   }
 
   const githubBind = handleSubmit.bind(null, "github");

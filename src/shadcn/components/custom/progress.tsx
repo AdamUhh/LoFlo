@@ -16,7 +16,7 @@ const Progress = React.forwardRef<
   <div>
     {showProgress && (
       <div className="w-full px-2 text-center text-sm font-medium tracking-wider">
-        {value} | {max}
+        {max == 0 ? 0 : value} | {max}
       </div>
     )}
     <ProgressPrimitive.Root
@@ -28,7 +28,7 @@ const Progress = React.forwardRef<
         className="h-full w-full flex-1 bg-primary transition-all"
         style={{
           transform: `translateX(-${
-            100 - (max && value ? (clamp(value, max) / max) * 100 : value || 0)
+            100 - (max && value ? (clamp(value, max) / max) * 100 : max == 0 ? 0 : value || 0)
           }%)`,
         }}
       />

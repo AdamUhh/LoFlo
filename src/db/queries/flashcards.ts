@@ -1,13 +1,16 @@
 "use server";
 
 import { auth } from "auth";
+import { T_ViewedFlashcardStats } from "components/Practice/types";
 import { db } from "db/index";
 
-import { flashcard as flashcardsTable } from "db/schema/flashcards";
 import { flashcardStatistics as flashcardStatisticsTable } from "db/schema/flashcardStatistics";
+import { flashcard as flashcardsTable } from "db/schema/flashcards";
+import { isTuple } from "db/utils";
 import { and, eq, sql } from "drizzle-orm";
-import { redirect } from "next/navigation";
 import { SQLiteRaw } from "drizzle-orm/sqlite-core/query-builders/raw";
+import { redirect } from "next/navigation";
+import { T_FinishPracticeCRUDPayload } from "src/types/action";
 import { T_PracticeFlashcardData } from "src/types/flashcard";
 
 const createFlashcard = ({
@@ -15,12 +18,11 @@ const createFlashcard = ({
   answer,
   userId,
   folderId,
-  autoSpeakerMode,
 }: typeof flashcardsTable.$inferInsert) => {
   return db.transaction(async (tx) => {
     const flashcardReturn = await tx
       .insert(flashcardsTable)
-      .values({ question, answer, userId, folderId, autoSpeakerMode })
+      .values({ question, answer, userId, folderId })
       .returning({ flashcardId: flashcardsTable.id });
 
     await tx
@@ -37,11 +39,10 @@ const updateFlashcard = ({
   id,
   userId,
   folderId,
-  autoSpeakerMode,
 }: typeof flashcardsTable.$inferInsert) => {
   return db
     .update(flashcardsTable)
-    .set({ question, answer, folderId, autoSpeakerMode })
+    .set({ question, answer, folderId })
     .where(and(eq(flashcardsTable.id, id!), eq(flashcardsTable.userId, userId)))
     .returning({ flashcardId: flashcardsTable.id });
 };
@@ -68,6 +69,44 @@ const bookmarkFlashcard = ({
     );
 };
 
+const updateFlashcardStatistics = async (
+  stats: T_ViewedFlashcardStats[],
+  userId: string,
+): Promise<T_FinishPracticeCRUDPayload[]> => {
+  let updates: any[] = [];
+
+  stats.map((s) =>
+    updates.push(
+      db
+        .update(flashcardStatisticsTable)
+        .set({
+          correct: sql`${flashcardStatisticsTable.correct} + ${s.correct}`,
+          incorrect: sql`${flashcardStatisticsTable.incorrect} + ${s.incorrect}`,
+          skipped: sql`${flashcardStatisticsTable.skipped} + ${s.skipped}`,
+        })
+        .where(
+          and(
+            eq(flashcardStatisticsTable.userId, userId),
+            eq(flashcardStatisticsTable.flashcardId, s.flashcardId),
+          ),
+        ),
+    ),
+  );
+
+  if (isTuple(updates)) {
+    await db.batch(updates);
+  }
+
+  // ? merges all of the flashcards stats
+  return [
+    {
+      correct: stats.reduce((acc, item) => acc + item.correct, 0),
+      incorrect: stats.reduce((acc, item) => acc + item.incorrect, 0),
+      skipped: stats.reduce((acc, item) => acc + item.skipped, 0),
+    },
+  ];
+};
+
 const selectPracticeFlashcards = async (
   folderId: string,
   mode: string,
@@ -76,13 +115,45 @@ const selectPracticeFlashcards = async (
   if (!session?.user) redirect("/signin");
 
   if (mode === "all") {
+    return db.all(sql`
+    WITH RECURSIVE FolderHierarchy AS (
+      SELECT
+        id,
+        parentId
+      FROM
+        folder
+      WHERE
+        id = ${folderId}
+      UNION ALL
+      SELECT
+        f.id,
+        f.parentId
+      FROM
+        folder f
+      JOIN
+        FolderHierarchy h ON f.parentId = h.id
+    )
+    
+    SELECT
+      flashcard.id,
+      flashcard.question,
+      flashcard.answer,
+      flashcardStatistics.bookmarked AS bookmarked
+    FROM
+      flashcard
+    LEFT JOIN
+      flashcardStatistics ON flashcard.id = flashcardStatistics.flashcardId
+    WHERE
+      flashcard.folderId IN (SELECT id FROM FolderHierarchy)
+      AND flashcard.userId = ${session.user.id};
+    
+    `);
   }
   return db.all(sql`
     SELECT
       flashcard.id,
       flashcard.question,
       flashcard.answer,
-      flashcard.autoSpeakerMode,
       flashcardStatistics.bookmarked as bookmarked
     FROM
     flashcard
@@ -95,6 +166,7 @@ export {
   bookmarkFlashcard,
   createFlashcard,
   deleteFlashcard,
-  updateFlashcard,
   selectPracticeFlashcards,
+  updateFlashcard,
+  updateFlashcardStatistics,
 };

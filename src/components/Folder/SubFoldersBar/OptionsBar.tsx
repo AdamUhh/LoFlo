@@ -51,6 +51,7 @@ export default function OptionsBar({
         setIsOpen={setIsEditDialogOpen}
         name={currentFolder.name}
         description={currentFolder.description}
+        isSubfolder={!!currentFolder.parentId}
       />
       <DeleteFolderDialog
         isOpen={isDeleteDialogOpen}

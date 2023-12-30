@@ -4,15 +4,25 @@ import DeleteFlashcardDialog from "components/FlashcardTemplate/DeleteFlashcard"
 import FlashcardDropdownOptions from "components/FlashcardTemplate/DropdownOptions";
 import EditFlashcardDialog from "components/FlashcardTemplate/EditFlashcard";
 import SpeechButton from "components/FlashcardTemplate/SpeechButton";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { T_PracticeFlashcardData } from "src/types/flashcard";
 import MainOptions from "./MainOptions";
+import { T_ViewedFlashcardStats } from "./types";
 
 type MainProps = {
   currentFlashcardIndex: number;
   setCurrentFlashcardIndex: Dispatch<SetStateAction<number>>;
   flashcardData: T_PracticeFlashcardData[];
   folderId: string;
+  viewedFlashcardStats: T_ViewedFlashcardStats[];
+  setViewedFlashcardStats: Dispatch<SetStateAction<T_ViewedFlashcardStats[]>>;
+};
+
+const initialState: T_PracticeFlashcardData = {
+  answer: "",
+  question: "Nothing Found",
+  id: "",
+  bookmarked: false,
 };
 
 export default function Main({
@@ -20,12 +30,19 @@ export default function Main({
   setCurrentFlashcardIndex,
   flashcardData,
   folderId,
+  setViewedFlashcardStats,
+  viewedFlashcardStats,
 }: MainProps) {
   const [showAnswer, setShowAnswer] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  const currentFlashcard = flashcardData[currentFlashcardIndex];
+  const [filteredData] = useState<T_PracticeFlashcardData[]>(flashcardData);
+  const [currentFlashcard, setCurrentFlashcard] = useState<T_PracticeFlashcardData>(initialState);
+
+  useEffect(() => {
+    setCurrentFlashcard(filteredData[currentFlashcardIndex] || initialState);
+  }, [currentFlashcardIndex, filteredData]);
 
   return (
     <div className="relative grid h-2/4 w-full grid-rows-6 rounded-lg bg-secondary shadow-md shadow-[#00000011] drop-shadow">
@@ -57,15 +74,20 @@ export default function Main({
         flashcardId={currentFlashcard.id}
       />
 
-      <div className="row-span-full flex h-full w-full items-center justify-center px-10">
-        {showAnswer ? currentFlashcard.answer : currentFlashcard.question}
+      <div className="row-span-full overflow-hidden p-10">
+        <div className="whitespace-pre-wrap h-full w-full overflow-auto flex items-center justify-center ">
+          {showAnswer ? currentFlashcard.answer : currentFlashcard.question}
+        </div>
       </div>
 
       <MainOptions
         setShowAnswer={setShowAnswer}
+        currentFlashcardIndex={currentFlashcardIndex}
+        flashcardData={flashcardData}
         setCurrentFlashcardIndex={setCurrentFlashcardIndex}
-        flashcardDataLength={flashcardData.length}
         showAnswer={showAnswer}
+        viewedFlashcardStats={viewedFlashcardStats}
+        setViewedFlashcardStats={setViewedFlashcardStats}
       />
     </div>
   );

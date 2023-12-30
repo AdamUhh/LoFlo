@@ -3,26 +3,22 @@ import { T_PracticeFlashcardData } from "src/types/flashcard";
 
 type QueueProps = {
   currentFlashcardIndex: number;
-  //   setCurrentFlashcardIndex: React.Dispatch<React.SetStateAction<number>>;
   flashcardData: T_PracticeFlashcardData[];
 };
 
-export default function Queue({
-  currentFlashcardIndex,
-  //   setCurrentFlashcardIndex,
-  flashcardData,
-}: QueueProps) {
+export default function Queue({ currentFlashcardIndex, flashcardData }: QueueProps) {
   const getNextFlashcards = () => {
-    const nextFlashcards: T_PracticeFlashcardData[] = [];
-    for (let i = 1; i <= 6; i++) {
-      const nextIndex = currentFlashcardIndex + i;
+    if (!!flashcardData.length) {
+      const nextFlashcards: T_PracticeFlashcardData[] = [];
+      for (let i = 1; i <= 6; i++) {
+        const nextIndex = currentFlashcardIndex + i;
 
-      // Check if the next index is within the bounds of flashcardData
-      if (nextIndex < flashcardData.length) {
-        nextFlashcards.push(flashcardData[nextIndex]);
+        // Check if the next index is within the bounds of flashcardData
+        if (nextIndex < flashcardData.length) nextFlashcards.push(flashcardData[nextIndex]);
       }
+      return nextFlashcards;
     }
-    return nextFlashcards;
+    return [];
   };
 
   return (

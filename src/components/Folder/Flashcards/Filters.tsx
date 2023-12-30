@@ -3,7 +3,7 @@
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { Button } from "shadcn/components/ui/button";
 import {
   DropdownMenu,
@@ -15,15 +15,20 @@ import {
 
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 
-const initialState = {
-  all: true,
-  bookmarked: false,
-  incorrect: false,
-  skipped: false,
+type FilterProps = {
+  additionalFilters?: Record<string, Checked>;
 };
 
-export default function Filter() {
-  const [filters, setFilters] = useState<Record<string, Checked>>(initialState);
+const initialState: Record<string, Checked> = {
+  all: true,
+  bookmarked: false,
+};
+
+export default function Filter({ additionalFilters }: FilterProps) {
+  const [filters, setFilters] = useState<Record<string, Checked>>({
+    ...initialState,
+    ...additionalFilters,
+  });
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -43,8 +48,12 @@ export default function Filter() {
   }
 
   function handleAllChange() {
-    setFilters(initialState);
-    handleFilter(initialState);
+    const _initialState = {
+      ...initialState,
+      ...additionalFilters,
+    };
+    setFilters(_initialState);
+    handleFilter(_initialState);
   }
 
   function handleChange(option: keyof typeof filters) {
@@ -77,7 +86,11 @@ export default function Filter() {
                   ? Object.entries(filters)
                       .map(([k, v]) => v && k)
                       .filter(Boolean)
-                      .map((v) => <span className="text-left text-sm opacity-50">{v}{" "}</span>)
+                      .map((v) => (
+                        <span key={v?.toString()} className="text-left text-sm opacity-50">
+                          {v}
+                        </span>
+                      ))
                   : "Filters"}
               </span>
             </Button>

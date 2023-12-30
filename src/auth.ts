@@ -35,7 +35,7 @@ export const authConfig = {
   adapter: getAdapter(),
   secret: process.env.AUTH_SECRET,
   pages: {
-    signIn: '/signin'
+    signIn: "/signin",
   },
   callbacks: {
     async session({ session, user }) {
@@ -45,7 +45,7 @@ export const authConfig = {
     // ? Middleware, used to redirect user to signin if they are on a path that requires authentication
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const authenticatedPaths = ["/dashboard", "/my-folders"];
+      const authenticatedPaths = ["/my-folders"];
       const isProtected = authenticatedPaths.some((path) => nextUrl.pathname.startsWith(path));
 
       if (isProtected && !isLoggedIn) {

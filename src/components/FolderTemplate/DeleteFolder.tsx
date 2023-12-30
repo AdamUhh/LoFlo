@@ -1,5 +1,3 @@
-"use client";
-
 import { useParams } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
@@ -63,9 +61,6 @@ export default function DeleteFolderDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DialogClose>
           <form action={onFormSubmit} className="w-full space-y-6">
             {!!params.folder?.length && (
               <Input
@@ -90,6 +85,9 @@ export default function DeleteFolderDialog({
 
             <SubmitButton mode="delete" />
           </form>
+          <DialogClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

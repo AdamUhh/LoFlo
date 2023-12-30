@@ -23,7 +23,6 @@ const createSchema = z.object({
     .trim()
     .max(MAX_TEXTAREA_CHAR, { message: `Answer too long! Max Characters: ${MAX_TEXTAREA_CHAR}` })
     .optional(),
-  speakerMode: z.union([z.literal("on"), z.literal(null)]),
   flashcardFolderParentId: z.string().trim(),
 });
 
@@ -46,7 +45,6 @@ async function createFlashcardAction(_: any, formData: FormData): Promise<T_CRUD
   const parse = createSchema.safeParse({
     flashcardQuestion: formData.get("flashcardQuestion"),
     flashcardAnswer: formData.get("flashcardAnswer"),
-    speakerMode: formData.get("speakerMode"),
     flashcardFolderParentId: formData.get("flashcardFolderParentId"),
   });
 
@@ -64,7 +62,6 @@ async function createFlashcardAction(_: any, formData: FormData): Promise<T_CRUD
       question: data.flashcardQuestion,
       answer: data.flashcardAnswer,
       userId: session.user.id,
-      autoSpeakerMode: data.speakerMode !== null,
       folderId: data.flashcardFolderParentId,
     });
 
@@ -97,7 +94,6 @@ async function updateFlashcardAction(_: any, formData: FormData): Promise<T_CRUD
   const parse = updateSchema.safeParse({
     flashcardQuestion: formData.get("flashcardQuestion"),
     flashcardAnswer: formData.get("flashcardAnswer"),
-    speakerMode: formData.get("speakerMode"),
     flashcardFolderParentId: formData.get("flashcardFolderParentId"),
     flashcardId: formData.get("flashcardId"),
   });
@@ -116,7 +112,6 @@ async function updateFlashcardAction(_: any, formData: FormData): Promise<T_CRUD
       question: data.flashcardQuestion,
       answer: data.flashcardAnswer,
       userId: session.user.id,
-      autoSpeakerMode: data.speakerMode !== null,
       folderId: data.flashcardFolderParentId,
       id: data.flashcardId,
     });
@@ -223,6 +218,8 @@ async function bookmarkFlashcardAction({
 }
 
 export {
-  bookmarkFlashcardAction, createFlashcardAction, deleteFlashcardAction, updateFlashcardAction
+  bookmarkFlashcardAction,
+  createFlashcardAction,
+  deleteFlashcardAction,
+  updateFlashcardAction,
 };
-

@@ -95,7 +95,7 @@ function DialogContents({
 
   return (
     <form action={onFormSubmit} className="flex h-full w-full flex-col">
-      <div className="flex h-full flex-col gap-1 md:flex-row">
+      <div className="mb-4 flex h-full flex-col gap-1 md:flex-row">
         <TextareaWithCount
           maxCount={MAX_TEXTAREA_CHAR}
           placeholder="Question"
@@ -135,23 +135,7 @@ function DialogContents({
           />
         )}
       </div>
-      <div className="items-top mt-4 flex gap-2">
-        <Checkbox id="speakerMode" name="speakerMode" />
-        <div className="grid gap-1.5 leading-none">
-          <Label
-            htmlFor="speakerMode"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            <div className=" -mt-1 flex items-center gap-1">
-              <Volume2 />
-              Auto Read Text
-            </div>
-            <p className="mt-1 text-sm font-normal text-muted-foreground">
-              Flashcard will automatically read text aloud. <br /> Useful for language flashcards.
-            </p>
-          </Label>
-        </div>
-      </div>
+
       {formState.status === "error" && (
         <div className="mt-2 flex items-center gap-1">
           <p className="text-red-500">{formState.returnMessage || "Failed to create flashcard"}</p>

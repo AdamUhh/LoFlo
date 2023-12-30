@@ -1,6 +1,3 @@
-"use client";
-
-import { Link } from "lucide-react";
 import { useParams } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
@@ -61,9 +58,6 @@ export default function DeleteFlashcardDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DialogClose>
           <form action={onFormSubmit} className="w-full space-y-6">
             {!!flashcardId?.length && (
               <Input
@@ -87,6 +81,9 @@ export default function DeleteFlashcardDialog({
             )}
             <SubmitButton mode="delete" />
           </form>
+          <DialogClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
