@@ -27,24 +27,23 @@ export default async function HomePage() {
           <div className="absolute bottom-8 left-8 h-44 w-44 rounded-xl bg-green-500"></div>
           <div className="absolute bottom-56 left-72 h-16 w-16  rotate-45 rounded bg-purple-400"></div>
 
-          <div className="text-center z-10">
+          <div className="z-10 text-center">
             <h1 className="mb-4 text-5xl font-bold text-gray-800">Welcome to</h1>
             <h2 className="mb-8 text-6xl font-extrabold text-indigo-600">Loflo</h2>
 
             <div className="flex flex-col items-center gap-2">
               <button className="focus:shadow-outline-indigo mx-auto flex gap-2 rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none active:bg-indigo-800 ">
                 {session?.user ? (
-                  <>
+                  <Link href={"/my-folders"} className="flex gap-2">
                     <span>Go to app</span>
                     <ArrowRight />
-                  </>
+                  </Link>
                 ) : (
                   <Link href={"/signin"} className="flex gap-2">
                     <span>Get Started</span> <ArrowRight />
                   </Link>
                 )}
               </button>
-              {session?.user && <AuthSignOut />}
             </div>
           </div>
         </div>
