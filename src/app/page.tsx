@@ -34,7 +34,7 @@ export default async function HomePage() {
             <div className="flex flex-col items-center gap-2">
               <button className="focus:shadow-outline-indigo mx-auto flex gap-2 rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none active:bg-indigo-800 ">
                 {session?.user ? (
-                  <Link href={"/my-folders"} className="flex gap-2">
+                  <Link href={"/my-folders"} className="flex items-center gap-2">
                     <span>Go to app</span>
                     <ArrowRight size={20} />
                   </Link>
