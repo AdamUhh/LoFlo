@@ -1,22 +1,41 @@
-# Welcome to Loflo
+# Loflo
 
-## How to install
+Welcome to Loflo, a simple flashcard app for effective learning.
+
+## Features
+
+- Create folders, sub-folders, and flashcards.
+- Search, bookmark, and filter flashcards.
+- Dedicated practice mode.
+- Text-to-Speech.
+
+### The App
+
+![Practice mode](<https://i.imgur.com/7cL4sub.gif>
+ "Practice mode")
+
+ ![Editing, filtering, and sub-folders](<https://i.imgur.com/sjjAx8n.gif>
+ "Editing, filtering, and sub-folders")
+
+## Development
+
+### Install
 
 ``` cli
 pnpm i
 ```
 
-## How to run development
+### Run development
 
 ``` cli
 pnpm dev
 ```
 
-## NextAuth
+### NextAuth
 
 - For github credentials, remember that it should be an OAuth App, not the Github App
 
-## How to start Turso db
+## Turso DB
 
 - Requirements to run: [Turso CLI](https://docs.turso.tech/reference/turso-cli)
   
@@ -45,19 +64,19 @@ pnpm dev
 
 Also, if you accidentally typed `exit` on the WSL terminal, and it lost color, packages, and functionality, type `source ~/.bashrc`
 
-### Run db locally
+#### Run db locally
 
 ``` cli
 turso dev --db-file dev.db
 ```
 
-### Push db
+#### Push db
 
 ``` cli
 pnpm db:push
 ```
 
-### Drizzle Studio
+#### Drizzle Studio
 
 ``` cli
 pnpm studio
@@ -103,3 +122,7 @@ vercel --prod
 
 - Make sure that you push your schema to the product turso db
 - In other words, run `pnpm db:push` in your CLI with your turso env instead of dev env
+
+#### Known Issues
+
+- Count for nested subfolders and flashcards are not accurate.
