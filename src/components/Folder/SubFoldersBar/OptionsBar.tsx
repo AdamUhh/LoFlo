@@ -22,7 +22,7 @@ export default function OptionsBar({
 
   return (
     <>
-      <div className="mt-2 flex items-center justify-between">
+      <div className="mt-2 flex flex-col-reverse gap-2 sm:flex-row items-start sm:items-center justify-between">
         <div className="flex items-center gap-2">
           {currentFolder.parentId !== null && (
             <Button title="Go to parent folder" className="px-3" variant={"ghost"} asChild>
@@ -34,7 +34,7 @@ export default function OptionsBar({
           <h2 className="text-2xl font-medium">Subfolders</h2>
           <AddFolderButton />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-auto sm:ml-0">
           <Button variant={"outline"} asChild>
             <Link href="/my-folders">View All Folders</Link>
           </Button>

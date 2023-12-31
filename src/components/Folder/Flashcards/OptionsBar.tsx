@@ -7,7 +7,7 @@ import Search from "./Search";
 export default function OptionsBar({ flashcardCount }: { flashcardCount: string | number }) {
   return (
     <>
-      <div className="mt-2 flex items-center justify-between">
+      <div className="mt-2 flex flex-col gap-2 sm:flex-row items-start sm:items-center justify-between">
         <div className="flex items-center gap-2">
           <h2 className="text-2xl font-medium">Flashcards</h2>
           <AddFlashcardButton />

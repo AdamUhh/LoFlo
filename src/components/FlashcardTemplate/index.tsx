@@ -12,7 +12,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from "shadcn/components/ui/dialog";
 import { cn } from "shadcn/utils";
 import { T_FlashcardData } from "src/types/folder";
@@ -103,24 +103,26 @@ export default function FlashcardTemplate({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{showAnswer ? "Answer" : "Question"}</DialogTitle>
-            <DialogDescription className="whitespace-pre-wrap overflow-auto max-h-[60vh]">
+            <DialogDescription className="max-h-[60vh] overflow-auto whitespace-pre-wrap">
               {showAnswer ? flashcard.answer : flashcard.question}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant={"secondary"}
-              className={cn("h-fit mr-auto p-1 px-5 gap-2", showAnswer && "brightness-90")}
-              onClick={handleCardFlip}
-            >
-              <FlipHorizontal size={20} /> Flip
-            </Button>
+            <div className="flex w-full space-x-2">
+              <Button
+                variant={"secondary"}
+                className={cn("mr-auto h-fit gap-2 p-1 px-5", showAnswer && "brightness-90")}
+                onClick={handleCardFlip}
+              >
+                <FlipHorizontal size={20} /> Flip
+              </Button>
               <SpeechButton text={showAnswer ? flashcard.answer : flashcard.question} />
               <BookmarkButton
                 bookmarked={flashcard.bookmarked}
                 folderId={folderId}
                 flashcardId={flashcard.id}
               />
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
